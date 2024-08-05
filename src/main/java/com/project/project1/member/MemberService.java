@@ -1,6 +1,7 @@
 package com.project.project1.member;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<Member> getRanking(int num) {
         List<Member> members = memberRepository.findAllByOrderByScoreDesc();
@@ -24,7 +26,7 @@ public class MemberService {
 
         member.setUsername(username);
         member.setEmail(email);
-        member.setPassword(password);
+        member.setPassword(passwordEncoder.encode(password));
 
         memberRepository.save(member);
         return member;
@@ -34,7 +36,7 @@ public class MemberService {
     {
         member.setUsername(username);
         member.setEmail(email);
-        member.setPassword(password);
+        member.setPassword(passwordEncoder.encode(password));
 
         memberRepository.save(member);
     }
