@@ -1,3 +1,5 @@
+server:
+  port: 8015
 spring:
   h2:
     console:
