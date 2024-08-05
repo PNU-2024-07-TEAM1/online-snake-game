@@ -8,13 +8,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-//@RequestMapping("/chat")
+@RequestMapping("/chat")
 public class ChatController {
     private final SimpMessagingTemplate template;
     private final ChatService chatService;
@@ -41,8 +42,26 @@ public class ChatController {
 
     @MessageMapping("/sendMessage") // 클라이언트가 /app/sendMessage로 메시지를 보내면
     @SendTo("/topic/messages") // 메시지를 /topic/messages로 브로드캐스팅
-    public String sendMessage(String message, Principal principal) throws Exception {
-        chatService.addMessage(memberService.getMember(principal.getName()), message);
-        return message; // 수신된 메시지를 그대로 반환
+    public MessageDTO sendMessage(String message, Principal principal) throws Exception {
+
+        Message messageEntity;
+
+        if (principal == null){
+            messageEntity = chatService.makeMessage(
+                    memberService.getMember("anonymous"),
+                    message
+            );
+            chatService.addMessage(messageEntity);
+        } else {
+            messageEntity = chatService.makeMessage(
+                    memberService.getMember(principal.getName()),
+                    message
+            );
+            chatService.addMessage(messageEntity);
+        }
+        MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setUsername(messageEntity.getSender().getUsername());
+        messageDTO.setContent(messageEntity.getContent());
+        return messageDTO;
     }
 }
