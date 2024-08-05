@@ -1,21 +1,20 @@
 package com.project.project1.member;
 
 import jakarta.validation.Valid;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/member")
 public class MemberController {
 
-//    private final MemberService memberService; 멤버 서비스 구현 필요
+    private final MemberService memberService;
 
     @GetMapping("/signup")
     public String signup(MemberCreationForm memberCreationForm) {
@@ -34,9 +33,24 @@ public class MemberController {
             return "signup_form";
         }
 
-//        memberService.create(memberCreationForm.getMembername(),
-//                memberCreationForm.getEmail(), memberCreationForm.getPassword1()); 멤버 서비스 구현 필요
+        try {
+            memberService.create(memberCreationForm.getUsername(),
+                    memberCreationForm.getEmail(), memberCreationForm.getPassword1());
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
+            return "signup_form";
+        } catch (Exception e) {
+            e.printStackTrace();
+            bindingResult.reject("signupFailed", e.getMessage());
+            return "signup_form";
+        }
 
         return "redirect:/";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login_form";
     }
 }
