@@ -1,0 +1,97 @@
+:root {
+    --background-color: #111111;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--background-color);
+}
+
+@property --rY {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@property --rY2 {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@property --hue {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+.scene {
+    position: relative;
+    width: 400px;
+    height: 400px; /* Height added for better visibility */
+    aspect-ratio: 1;
+    perspective: 1500px;
+    transform-style: preserve-3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotateY(var(--rY2));
+    animation: rotate 20s linear infinite; /* Slower rotation for better visibility */
+}
+
+.point {
+    position: absolute;
+    width: 20px; /* Increased size of the points */
+    height: 20px; /* Increased size of the points */
+    background: red; /* Initial color for better visibility */
+    border-radius: 50%;
+    filter: hue-rotate(var(--hue));
+    transform: translate3d(var(--x), var(--y), var(--z)) rotateY(var(--rY)) !important;
+    animation: rotateN 10s linear infinite, var(--animation-color);
+}
+
+@keyframes rotate {
+    0% {
+        --rY2: 0deg;
+    }
+    100% {
+        --rY2: 360deg;
+    }
+}
+
+@keyframes rotateN {
+    0% {
+        --rY: 0deg;
+    }
+    100% {
+        --rY: -360deg;
+    }
+}
+
+@keyframes color {
+    0% {
+        background: red;
+        --hue: 0deg;
+    }
+    100% {
+        background: yellow;
+        --hue: 360deg;
+    }
+}
+
+@keyframes color2 {
+    0% {
+        background: blue;
+        --hue: 0deg;
+    }
+    100% {
+        background: green;
+        --hue: 360deg;
+    }
+}
