@@ -2,18 +2,23 @@
 <html>
 <head>
     <title>STOMP WebSocket Example</title>
+    <style>
+        .scrollable-container {
+            width: 300px; /* 너비 설정 */
+            height: 400px; /* 높이 설정 */
+            border: 1px solid #ccc; /* 테두리 설정 */
+            overflow-y: auto; /* 수직 스크롤 가능 */
+            overflow-x: hidden; /* 수평 스크롤 숨기기 */
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
-<ul id="messageList">
-    <!-- Thymeleaf의 th:each 속성을 사용하여 리스트를 반복합니다. -->
-    <li th:each="message : ${messages}" th:text="${message}"></li>
-</ul>
 <div id="chat">
+    <div id="messages" class="scrollable-container"></div>
     <input type="text" id="message" placeholder="Type a message...">
     <button onclick="sendMessage()">Send</button>
-    <div id="messages"></div>
 </div>
 
 <script>
@@ -25,13 +30,19 @@
         stompClient.subscribe('/topic/messages', function (message) {
             var messageDTO = JSON.parse(message.body);
             document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
+            scrollToBottom();
         });
     });
 
+    function scrollToBottom() {
+        const container = document.getElementById('messages');
+        container.scrollTop = container.scrollHeight;
+    }
 
     function sendMessage() {
         var message = document.getElementById('message').value;
         stompClient.send("/app/sendMessage", {}, message);
+        scrollToBottom();
     }
 </script>
 </body>
