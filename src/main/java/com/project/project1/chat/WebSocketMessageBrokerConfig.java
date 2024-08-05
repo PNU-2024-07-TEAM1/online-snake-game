@@ -21,8 +21,4 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:8015").withSockJS(); // WebSocket 엔드포인트 설정
     }
-
-    public WebSocketHandler myHandler() {
-        return new WebSocketHandler();
-    }
 }
