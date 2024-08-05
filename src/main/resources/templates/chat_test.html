@@ -21,8 +21,10 @@
     var stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
+
         stompClient.subscribe('/topic/messages', function (message) {
-            document.getElementById('messages').innerHTML += '<div>' + message.content.body + '</div>';
+            var messageDTO = JSON.parse(message.body);
+            document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
         });
     });
 
