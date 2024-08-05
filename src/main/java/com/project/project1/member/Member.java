@@ -1,10 +1,7 @@
 package com.project.project1.member;
 
 import com.fasterxml.jackson.annotation.JsonTypeId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,11 +14,16 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer uniqueId;
+    private Integer id;
 
-    private String id;
+    @Column(unique = true)
+    private String username;
 
     private String password;
+
+    @Column(unique = true)
+    private String email;
+
     //일단 보류
     //private List<String> chatting;
 
