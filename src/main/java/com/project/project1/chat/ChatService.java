@@ -13,10 +13,14 @@ public class ChatService {
     public static List<String> messages= new ArrayList<>();
     private final MessageRepository messageRepository;
 
-    public void addMessage(Member sender, String content){
+    public Message makeMessage(Member sender, String content){
         Message message = new Message();
         message.setSender(sender);
         message.setContent(content);
+        return message;
+    }
+
+    public void addMessage(Message message){
         messageRepository.save(message);
     }
 
