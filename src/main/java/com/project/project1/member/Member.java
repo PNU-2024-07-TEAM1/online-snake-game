@@ -1,4 +1,4 @@
-package com.project.project1;
+package com.project.project1.member;
 
 import com.fasterxml.jackson.annotation.JsonTypeId;
 import jakarta.persistence.Entity;
