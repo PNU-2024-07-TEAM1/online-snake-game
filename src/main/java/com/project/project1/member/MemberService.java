@@ -12,6 +12,14 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public Member getMember(String username) throws Exception {
+        Optional<Member> member = memberRepository.findByUsername(username);
+        if (member.isPresent()){
+            return member.get();
+        }
+        throw new Exception("Member not found");
+    }
+
     public List<Member> getRanking(int num) {
         List<Member> members = memberRepository.findAllByOrderByScoreDesc();
 
