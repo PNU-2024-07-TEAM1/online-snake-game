@@ -22,18 +22,8 @@
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/messages', function (message) {
-            document.getElementById('messages').innerHTML += '<div>' + message.body + '</div>';
+            document.getElementById('messages').innerHTML += '<div>' + message.content.body + '</div>';
         });
-        // stompClient.subscribe('/topic/items', function (message) {
-        //     var messageList = document.getElementById('messageList');
-        //     messageList.innerHTML = ''; // Clear existing items
-        //     var messages = JSON.parse(message.body);
-        //     messages.forEach(function (item) {
-        //         var li = document.createElement('li');
-        //         li.textContent = item;
-        //         messageList.appendChild(li);
-        //     });
-        // });
     });
 
 
@@ -41,10 +31,6 @@
         var message = document.getElementById('message').value;
         stompClient.send("/app/sendMessage", {}, message);
     }
-
-    // function updateItems(newItems) {
-    //     stompClient.send("/app/updateItems", {}, JSON.stringify(newItems));
-    // }
 </script>
 </body>
 </html>
