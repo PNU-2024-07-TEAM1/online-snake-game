@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>STOMP WebSocket Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<ul id="messageList">
+    <!-- Thymeleaf의 th:each 속성을 사용하여 리스트를 반복합니다. -->
+    <li th:each="message : ${messages}" th:text="${message}"></li>
+</ul>
+<div id="chat">
+    <input type="text" id="message" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <div id="messages"></div>
+</div>
+
+<script>
+    var socket = new SockJS('/ws');
+    var stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/messages', function (message) {
+            document.getElementById('messages').innerHTML += '<div>' + message.body + '</div>';
+        });
+        // stompClient.subscribe('/topic/items', function (message) {
+        //     var messageList = document.getElementById('messageList');
+        //     messageList.innerHTML = ''; // Clear existing items
+        //     var messages = JSON.parse(message.body);
+        //     messages.forEach(function (item) {
+        //         var li = document.createElement('li');
+        //         li.textContent = item;
+        //         messageList.appendChild(li);
+        //     });
+        // });
+    });
+
+
+    function sendMessage() {
+        var message = document.getElementById('message').value;
+        stompClient.send("/app/sendMessage", {}, message);
+    }
+
+    // function updateItems(newItems) {
+    //     stompClient.send("/app/updateItems", {}, JSON.stringify(newItems));
+    // }
+</script>
+</body>
+</html>
