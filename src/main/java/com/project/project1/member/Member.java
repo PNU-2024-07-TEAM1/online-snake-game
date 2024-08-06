@@ -26,6 +26,10 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+    private String color; // 지렁이 색
+
+    //일단 보류
+    //private List<String> chatting;
 
     private Integer score;
 
