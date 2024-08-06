@@ -29,7 +29,7 @@ public class GameService {
     }
 
     void addSnake(Member member) throws Exception {
-        Snake snake = new Snake(member.getId());
+        Snake snake = new Snake(member.getId(), memberService);
 
         snakes.add(snake);
     }
