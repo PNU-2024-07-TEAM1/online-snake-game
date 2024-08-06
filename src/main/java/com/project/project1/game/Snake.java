@@ -35,7 +35,15 @@ public class Snake {
     }
 
     void gameOver(){
+        for (Point point : snakeNodePlaces){
+            Experience experience = new Experience();
+            experience.setPosition(point);
+            GameService.experiences.add(
+                experience
+            );
+        }
         this.isAlive = false;
+        GameService.snakes.remove(this);
     }
 
     void update(){
@@ -77,7 +85,7 @@ public class Snake {
         }
 
         if (isCollision()){
-            GameService.snakes.remove(this);
+            gameOver();
         }
     }
 
