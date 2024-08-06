@@ -97,7 +97,7 @@ public class MemberService {
         return null;
     }
 
-    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId) {
+    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId, String profileImage) {
         Member member = new Member();
 
         member.setLoginId(loginId);
@@ -105,6 +105,7 @@ public class MemberService {
         member.setEmail(email);
         member.setProvider(provider);
         member.setProviderId(providerId);
+        member.setProfileImage(profileImage);
 
         memberRepository.save(member);
         return member;

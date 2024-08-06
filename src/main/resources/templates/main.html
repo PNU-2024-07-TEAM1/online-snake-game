@@ -128,6 +128,12 @@
             margin-bottom: 20px;
         }
 
+        a {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+        }
+
         #buttons {
             width: 100%;
             display: flex;
@@ -231,13 +237,13 @@
 
     <!-- Profile and Buttons Section -->
     <div class="profile-section">
-        <img src="profile-picture.jpg" alt="Profile Picture"> <!-- Replace with actual image source -->
+        <img th:src="${curUserProfileImage}" alt="Profile Picture"> <!-- Replace with actual image source -->
         <h1 th:text="${curUserName}"></h1>
         <p class="welcome-message">로그인 하신 걸 환영합니다!</p>
         <div id="buttons">
-            <button class="button exit">Logout</button>
-            <button class="button continue">Start Game</button>
-            <button class="button exit">Settings</button>
+            <a href="/member/logout" class="button exit">Logout</a>
+            <a class="button continue">Start Game</a>
+            <a class="button exit">Settings</a>
         </div>
     </div>
 </div>

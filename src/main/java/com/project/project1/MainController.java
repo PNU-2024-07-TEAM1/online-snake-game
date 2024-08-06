@@ -35,6 +35,10 @@ public class MainController {
         CustomOAuth2UserDetails customOAuth2UserDetails = (CustomOAuth2UserDetails) princial;
 
         String curUserName = customOAuth2UserDetails.getUsername();
+        String curUserProfileImage = customOAuth2UserDetails.getProfileImage();
+        System.out.println(curUserProfileImage);
+
+        model.addAttribute("curUserProfileImage", curUserProfileImage);
         model.addAttribute("curUserName", curUserName);
 
         return "main";

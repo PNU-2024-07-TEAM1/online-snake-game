@@ -35,6 +35,7 @@ public class Member {
 
     private String provider;
     private String providerId;
+    private String profileImage;
 
     //일단 보류
     //private List<String> chatting;
