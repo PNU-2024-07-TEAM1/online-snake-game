@@ -1,7 +1,6 @@
 :root {
     --background-color: #111111;
 }
-
 body {
     padding: 0;
     margin: 0;
@@ -12,48 +11,45 @@ body {
     overflow: hidden;
     background: var(--background-color);
 }
-
 @property --rY {
     syntax: "<angle>";
     inherits: false;
     initial-value: 0deg;
 }
-
 @property --rY2 {
     syntax: "<angle>";
     inherits: false;
     initial-value: 0deg;
 }
-
 @property --hue {
     syntax: "<angle>";
     inherits: false;
     initial-value: 0deg;
 }
-
 .scene {
     position: relative;
     width: 400px;
-    height: 400px; /* Height added for better visibility */
     aspect-ratio: 1;
     perspective: 1500px;
-    transform-style: preserve-3d;
+    transform-style:  preserve-3d;
     display: flex;
     justify-content: center;
     align-items: center;
     transform: rotateY(var(--rY2));
-    animation: rotate 20s linear infinite; /* Slower rotation for better visibility */
-}
-
-.point {
-    position: absolute;
-    width: 20px; /* Increased size of the points */
-    height: 20px; /* Increased size of the points */
-    background: red; /* Initial color for better visibility */
-    border-radius: 50%;
-    filter: hue-rotate(var(--hue));
-    transform: translate3d(var(--x), var(--y), var(--z)) rotateY(var(--rY)) !important;
-    animation: rotateN 10s linear infinite, var(--animation-color);
+    i {
+        --animation-color: color 2s calc(var(--i) * -.01s) linear infinite alternate;
+        position: absolute;
+        width: 60px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        filter: hue-rotate(var(--hue));
+        transform: translate3d(var(--x), var(--y), var(--z)) rotateY(var(--rY)) !important;
+        animation: rotateN 10s linear infinite, var(--animation-color);
+        &:nth-of-type(even) {
+            --animation-color: color2 4s calc(var(--i) * .01s) linear infinite reverse;
+        }
+    }
+    animation: rotate 10s linear infinite;
 }
 
 @keyframes rotate {
@@ -80,18 +76,154 @@ body {
         --hue: 0deg;
     }
     100% {
-        background: yellow;
+        background: black;
         --hue: 360deg;
     }
 }
 
 @keyframes color2 {
     0% {
-        background: blue;
+        background: white;
         --hue: 0deg;
     }
     100% {
-        background: green;
+        background: red;
         --hue: 360deg;
     }
 }
+
+.fancy-wipe {
+        margin: 0;
+        font-weight: 900;
+        font-size: 6rem;
+        position: relative;
+        --duration: 2.5s;
+        --easing: cubic-bezier(0.45, 0, 0.55, 1);
+        --colors: linear-gradient(
+                90deg,
+                #fff89a,
+                #cdf2ca,
+                #a2cdcd,
+                #d1e8e4,
+                #cab8ff,
+                #ff7878,
+                #ffc898
+        );
+    }
+
+.text {
+    display: block;
+    padding: 2rem;
+    color: white;
+    animation: wipe-in var(--duration) infinite var(--easing);
+    mask: linear-gradient(to right, white, white 45%, black, 55%, black);
+    mask-composite: exclude;
+    mask-mode: luminance;
+    mask-size: 300% 100%;
+    mask-position: 100% 0px;
+}
+
+.wipe-in {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+    background-image: var(--colors);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: wipe-in var(--duration) infinite var(--easing);
+    mask: linear-gradient(to right, black, black 45%, white 50%, black 52.5%, black);
+    mask-composite: exclude;
+    mask-mode: luminance;
+    mask-size: 300% 100%;
+    mask-position: 100% 0px;
+}
+
+.blur-in {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+    background-image: var(--colors);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: wipe-in var(--duration) infinite var(--easing);
+    mask: linear-gradient(to right, black, black 45%, white 52.5%, black 55%, black);
+    mask-composite: exclude;
+    mask-mode: luminance;
+    mask-size: 300% 100%;
+    mask-position: 100% 0px;
+    filter: blur(10px);
+}
+
+@keyframes wipe-in {
+    100% {
+        mask-position: 0px 0px;
+    }
+}
+
+/* 버튼 컨테이너 스타일 */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* 버튼 스타일 */
+.button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 50px; /* 좀 더 부드러운 둥글기 */
+    color: #fff;
+    background-color: #007bff; /* 기본 파란색 */
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase; /* 모든 문자 대문자 */
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    cursor: pointer; /* 클릭 가능한 느낌 추가 */
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300%;
+    height: 100%;
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    z-index: 0;
+}
+
+.button:hover::before {
+    transform: translateX(0);
+}
+
+.button:hover {
+    background-color: #0056b3; /* 어두운 파란색 */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+    background-color: #004494; /* 더 어두운 파란색 */
+    transform: translateY(2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.button span {
+    position: relative;
+    z-index: 1; /* 버튼 텍스트를 위에 표시 */
+}
+

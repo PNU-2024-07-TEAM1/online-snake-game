@@ -10,16 +10,10 @@ function createPoint(x, y, z, index) {
     point.style.setProperty('--x', x + 'px');
     point.style.setProperty('--y', y + 'px');
     point.style.setProperty('--z', z + 'px');
-    // Set animation color based on the index
-    if (index % 2 === 0) {
-        point.style.setProperty('--animation-color', 'color 4s linear infinite alternate');
-    } else {
-        point.style.setProperty('--animation-color', 'color2 4s linear infinite alternate');
-    }
     return point;
 }
 
-function sphere(samples, radius) {
+function sphere(samples, radius, index) {
     const points = [];
     const phi = Math.PI * (3 - Math.sqrt(5));
 
@@ -31,8 +25,10 @@ function sphere(samples, radius) {
 
         const x = Math.cos(theta) * radiusAtY;
         const z = Math.sin(theta) * radiusAtY;
+        const index = i;
 
-        points.push({ x: x * radius, y: y * radius, z: z * radius, index: i });
+        points.push({ x: x * radius, y: y * radius, z: z * radius, index: index});
+
     }
     return points;
 }
