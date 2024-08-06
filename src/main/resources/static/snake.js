@@ -183,12 +183,30 @@ function fetchGameFrame() {
             }
         ]
     };
+
+
+/*
+    return fetch('/')
+        .then(response =>response.json())
+        .then(data => {
+            drawGameFrame(data);
+        })
+        .catch(error => console.error('Error fetching game frame:' error));
+
+ */
 }
 
 const gameFrameDTO = fetchGameFrame();
-drawGameFrame(gameFrameDTO);
+drawGameFrame(gameFrameDTO)
 
 setInterval(() => {
     const gameFrameDTO = fetchGameFrame();
     drawGameFrame(gameFrameDTO);
 }, 100);
+
+/*
+setInterval(() => {
+    fetchGameFrame();
+}, 100)
+
+ */
