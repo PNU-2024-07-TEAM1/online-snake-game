@@ -1,11 +1,8 @@
 package com.project.project1.member;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +14,9 @@ public class Member {
     private Integer id;
 
     @Column(unique = true)
+    private String loginId;
+
+    @Column(unique = true)
     private String username;
 
     private String password;
@@ -24,12 +24,20 @@ public class Member {
     @Column(unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
     private String color; // 지렁이 색
 
     //일단 보류
     //private List<String> chatting;
 
     private Integer score;
+
+    private String provider;
+    private String providerId;
+
+    //일단 보류
+    //private List<String> chatting;
 
     // 지렁이 길이
     //private Integer earthwormLength;
