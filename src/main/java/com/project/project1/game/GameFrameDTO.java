@@ -10,4 +10,5 @@ import java.util.List;
 public class GameFrameDTO {
     private int score;
     private List<Snake> snakes;
+    private List<Experience> experiences;
 }
