@@ -71,7 +71,6 @@ class Snake {
             for (let segment of this.snakeNodePlaces) {
                 ctx.fillRect(segment.x - viewX, segment.y - viewY, scale, scale);
             }
-
             // 텍스트 색상 및 폰트 설정
             ctx.fillStyle = 'white';
             ctx.font = '12px Arial';
@@ -119,7 +118,7 @@ function drawGameFrame(gameFrameDTO) {
         snakes.push(snake);
 
         // viewX, viewY 값 player지렁이 위치로
-        if (snakeDTO.memberid === gameFrameDTO.playerId) {
+        if (snakeDTO.memberId === memberId) {
             let head = snake.snakeNodePlaces[0];
             viewX = head.x - canvas.width / 2;
             viewY = head.y - canvas.height / 2;
@@ -133,6 +132,11 @@ function drawGameFrame(gameFrameDTO) {
     // Draw each snake
     for (let snake of snakes) {
         snake.draw();
+    }
+
+    for (let experience of gameFrameDTO.experiences){
+        experience.x
+        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
 
     // Update the score
@@ -199,13 +203,6 @@ const gameFrameDTO = fetchGameFrame();
 drawGameFrame(gameFrameDTO);
 
 setInterval(() => {
-    const gameFrameDTO = fetchGameFrame();
-    drawGameFrame(gameFrameDTO);
-}, 100);
+    stompClient.send("/app/gameOutput", {}, );
+}, 500);
 
-/*
-setInterval(() => {
-    fetchGameFrame();
-}, 100)
-
- */
