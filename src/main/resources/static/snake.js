@@ -184,7 +184,6 @@ function fetchGameFrame() {
         ]
     };
 
-
 /*
     return fetch('/')
         .then(response =>response.json())
@@ -197,7 +196,7 @@ function fetchGameFrame() {
 }
 
 const gameFrameDTO = fetchGameFrame();
-drawGameFrame(gameFrameDTO)
+drawGameFrame(gameFrameDTO);
 
 setInterval(() => {
     const gameFrameDTO = fetchGameFrame();

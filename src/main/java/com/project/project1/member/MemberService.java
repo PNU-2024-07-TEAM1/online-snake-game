@@ -16,7 +16,7 @@ public class MemberService {
 
     public Member getMember(String username) throws Exception {
         Optional<Member> member = memberRepository.findByUsername(username);
-        if (member.isPresent()){
+        if (member.isPresent()) {
             return member.get();
         }
         throw new Exception("Member not found");
@@ -28,29 +28,36 @@ public class MemberService {
         return members.subList(0, Math.min(members.size(), num));
     }
 
-    public Member create(String username, String email, String password)
-    {
+    public Member create(String username, String email, String password, String color) {
         Member member = new Member();
 
         member.setUsername(username);
         member.setEmail(email);
         member.setPassword(passwordEncoder.encode(password));
+        member.setPassword(password);
+        member.setColor(color);
 
         memberRepository.save(member);
         return member;
     }
 
-    public void modify(Member member, String username, String email, String password)
-    {
+    public void modify(Member member, String username, String email, String password, String color) {
         member.setUsername(username);
         member.setEmail(email);
         member.setPassword(passwordEncoder.encode(password));
+        member.setPassword(password);
+        member.setColor(color);
 
         memberRepository.save(member);
     }
 
     public void delete(Member member) {
         this.memberRepository.delete(member);
+    }
+
+    // 사용자 프로필 조회
+    public Optional<Member> getProfile(String username) {
+        return memberRepository.findByUsername(username);
     }
 
     // 자기 랭킹 조회
@@ -74,5 +81,18 @@ public class MemberService {
             return new RankingResponse(rank, selfScore);
         }
         return null;
+    }
+
+    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId) {
+        Member member = new Member();
+
+        member.setLoginId(loginId);
+        member.setUsername(username);
+        member.setEmail(email);
+        member.setProvider(provider);
+        member.setProviderId(providerId);
+
+        memberRepository.save(member);
+        return member;
     }
 }

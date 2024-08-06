@@ -23,4 +23,11 @@ public class MemberCreationForm {
     @NotEmpty(message = "이메일은 필수항목입니다.")
     @Email
     private String email;
+
+    public MemberCreationForm() {
+        // 기본 컬러
+        this.color = "#0000FF";
+    }
+
+    private String color;
 }
