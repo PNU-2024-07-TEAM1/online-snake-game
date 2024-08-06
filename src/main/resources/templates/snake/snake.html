@@ -13,8 +13,9 @@
     </div>
     <div class="chat-container">
         <div id="score">Score: 0</div>
-        <div class="chat-box" id="chatBox"></div>
-        <input type="text" id="chatInput" placeholder="Type your message...">
+        <div id="messages" class="scrollable-container"></div>
+        <input type="text" id="message" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
