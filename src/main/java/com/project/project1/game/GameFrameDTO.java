@@ -8,8 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class GameFrameDTO {
-    private Integer playerId;
-    private boolean isAlive;
     private int score;
     private List<Snake> snakes;
 }
