@@ -9,6 +9,11 @@
 <body>
 <div class="container">
     <div class="game-container">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+             var memberId = /*[[${memberId}]]*/ {};
+            /*]]>*/
+        </script>
         <canvas id="gameCanvas"></canvas>
     </div>
     <div class="chat-container">
