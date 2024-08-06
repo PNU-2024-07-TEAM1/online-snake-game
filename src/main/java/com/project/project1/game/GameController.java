@@ -1,6 +1,7 @@
 package com.project.project1.game;
 
 import com.project.project1.member.Member;
+import com.project.project1.member.MemberRepository;
 import com.project.project1.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,16 +22,17 @@ public class GameController {
 
     private final GameService gameService;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @GetMapping("snake")
     public String getGamePage(Principal principal, Model model) throws Exception {
         Member member;
         if (principal != null){
-            member = memberService.getMember(principal.getName());
+            member = memberRepository.findByLoginId(principal.getName()).get();
         }else {
-            member = memberService.getMember("anonymous");
+            member = memberRepository.findByUsername("anonymous").get();
         }
-
+        gameService.initGame();
         gameService.addSnake(
             member
         );
@@ -44,11 +46,11 @@ public class GameController {
         Snake snake;
         if (principal != null){
             snake = gameService.getSnake(
-                    memberService.getMember(principal.getName()).getId()
+                    memberRepository.findByLoginId(principal.getName()).get().getId()
             );
         } else {
             snake = gameService.getSnake(
-                    memberService.getMember("anonymous").getId()
+                    memberRepository.findByUsername("anonymous").get().getId()
             );
         }
 
