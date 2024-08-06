@@ -41,6 +41,20 @@ public class MemberService {
         return member;
     }
 
+    public Member createTestScore(String username, String email, String password, String color, Integer score) {
+        Member member = new Member();
+
+        member.setUsername(username);
+        member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
+        member.setPassword(password);
+        member.setScore(score);
+        member.setColor(color);
+
+        memberRepository.save(member);
+        return member;
+    }
+
     public void modify(Member member, String username, String email, String password, String color) {
         member.setUsername(username);
         member.setEmail(email);
