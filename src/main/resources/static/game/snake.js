@@ -6,29 +6,25 @@ stompClient.connect({}, function (frame) {
 
     stompClient.subscribe('/topic/messages', function (message) {
         var messageDTO = JSON.parse(message.body);
-        document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
+        document.getElementById('chatBox').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
         scrollToBottom();
-    });
-
-    stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
-            console.log(gameFrameDTO.body);
-            drawGameFrame(JSON.parse(gameFrameDTO.body));
     });
 });
 
 function scrollToBottom() {
-    const container = document.getElementById('messages');
+    const container = document.getElementById('chatBox');
     container.scrollTop = container.scrollHeight;
 }
 
 function sendMessage() {
-    var message = document.getElementById('message').value;
+    var message = document.getElementById('chatInput').value;
     stompClient.send("/app/sendMessage", {}, message);
     scrollToBottom();
 }
 
 function sendInput(direction) {
     stompClient.send("/app/gameInput", {}, direction);
+    scrollToBottom();
 }
 
 // game 화면
@@ -43,8 +39,6 @@ const mapHeight = 5000; // Map height
 const scale = 20; // Size of each segment
 const speed = 100; // Speed of the game loop in ms
 
-var memberId = 1;
-
 let viewX = 0; // Viewport X offset
 let viewY = 0; // Viewport Y offset
 
@@ -52,6 +46,13 @@ function resizeCanvas() {
     const gameContainer = document.querySelector('.game-container');
     canvas.width = gameContainer.clientWidth;
     canvas.height = gameContainer.clientHeight;
+}
+
+function getRandomPosition() {
+    return {
+        x: Math.floor(Math.random() * (mapWidth / scale)) * scale,
+        y: Math.floor(Math.random() * (mapHeight / scale)) * scale
+    };
 }
 
 class Snake {
@@ -68,9 +69,8 @@ class Snake {
         ctx.fillStyle = this.id === 1 ? 'green' : 'blue';
         if(this.isAlive) {
             for (let segment of this.snakeNodePlaces) {
-                ctx.fillRect(segment.x * scale - viewX, segment.y * scale - viewY, scale, scale);
+                ctx.fillRect(segment.x - viewX, segment.y - viewY, scale, scale);
             }
-
             // 텍스트 색상 및 폰트 설정
             ctx.fillStyle = 'white';
             ctx.font = '12px Arial';
@@ -79,37 +79,54 @@ class Snake {
 
             // 머리 부분의 ID 표시
             let head = this.snakeNodePlaces[0];
-            ctx.fillText(this.id, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
+            ctx.fillText(this.id, head.x - viewX + scale / 2, head.y - viewY - 5);
         }
     }
+}
+
+class Food {
+    constructor(position) {
+        this.position = position;
+    }
+
+    draw() {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(this.position.x - viewX, this.position.y - viewY, scale, scale);
+    }
+}
+
+function updateScore(score) {
+    document.getElementById('score').textContent = `Score: ${score}`;
 }
 
 // 프레임 단순 출력
 function drawGameFrame(gameFrameDTO) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let snakes = [];
+    let foods = [];
+    let score = gameFrameDTO.score;
 
     for (let snakeDTO of gameFrameDTO.snakes) {
         let snake = new Snake(
-            snakeDTO.memberId,
+            snakeDTO.memberid,
             snakeDTO.snakeLength,
             snakeDTO.snakeNodePlaces,
-            snakeDTO.alive,
+            snakeDTO.isAlive,
             snakeDTO.direction,
             snakeDTO.grow
         );
         snakes.push(snake);
 
         // viewX, viewY 값 player지렁이 위치로
-        // if (snakeDTO.memberid === memberId) {
+        if (snakeDTO.memberId === memberId) {
             let head = snake.snakeNodePlaces[0];
-            viewX = head.x * scale - canvas.width / 2;
-            viewY = head.y * scale - canvas.height / 2;
+            viewX = head.x - canvas.width / 2;
+            viewY = head.y - canvas.height / 2;
 
             // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
-        // }
+        }
     }
 
     // Draw each snake
@@ -117,8 +134,13 @@ function drawGameFrame(gameFrameDTO) {
         snake.draw();
     }
 
+    for (let experience of gameFrameDTO.experiences){
+        experience.x
+        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
+    }
+
     // Update the score
-    // updateScore(score);
+    updateScore(score);
 
     // Draw boundaries for debugging
     ctx.strokeStyle = 'blue';
@@ -145,27 +167,42 @@ resizeCanvas();
 // test
 function fetchGameFrame() {
     return {
-        score:0,
-        snakes:[
+        playerId: 1,
+        isAlive: true,
+        score: 10,
+        snakes: [
             {
-                memberId:1,
-                snakeLength:3,
-                snakeNodePlaces:[
-                    {x:4693,y:1320},
-                    {x:4694,y:1320},
-                    {x:4695,y:1320}
+                memberid: 1,
+                snakeLength: 5,
+                snakeNodePlaces: [
+                    { x: 100, y: 100 },
+                    { x: 120, y: 100 },
+                    { x: 140, y: 100 },
+                    { x: 160, y: 100 },
+                    { x: 180, y: 100 }
                 ],
-                direction:"left",
-                grow:false,
-                alive:true
+                isAlive: true,
+                direction: 'RIGHT',
+                grow: false
             }
         ]
-    }
+    };
+
+    /*
+        return fetch('/')
+            .then(response =>response.json())
+            .then(data => {
+                drawGameFrame(data);
+            })
+            .catch(error => console.error('Error fetching game frame:' error));
+
+     */
 }
 
-// const gameFrameDTO = fetchGameFrame();
-// drawGameFrame(gameFrameDTO);
+const gameFrameDTO = fetchGameFrame();
+drawGameFrame(gameFrameDTO);
 
 setInterval(() => {
     stompClient.send("/app/gameOutput", {}, );
-}, 1000);
+}, 500);
+

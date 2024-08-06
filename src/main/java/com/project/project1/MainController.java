@@ -1,6 +1,9 @@
 package com.project.project1;
 
+import com.project.project1.member.Member;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
@@ -15,4 +18,5 @@ public class MainController {
     public String test() {
         return "snake/snake";
     }
+
 }
