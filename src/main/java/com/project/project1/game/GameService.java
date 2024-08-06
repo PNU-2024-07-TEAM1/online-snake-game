@@ -75,7 +75,7 @@ public class GameService {
                 Snake snake = snakes.get(i);
                 snake.update();
             }
-        }catch (Exception e){
+        } catch (Exception e){
 
         }
 
