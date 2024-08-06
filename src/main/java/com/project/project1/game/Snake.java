@@ -22,8 +22,8 @@ public class Snake {
     public Snake(Integer memberId){
         Random random = new Random();
         this.grow = false;
-        int rand_x = random.nextInt(100, 4900);
-        int rand_y = random.nextInt(100, 4900);
+        int rand_x = random.nextInt(50, 200);
+        int rand_y = random.nextInt(50, 200);
         this.memberId = memberId;
         this.snakeLength = 3;
         this.snakeNodePlaces = new ArrayList<>();
@@ -56,25 +56,25 @@ public class Snake {
         }
         this.snakeNodePlaces.add(0, head);
 
-        if (head.x < 0 || head.x >= 5000 || head.y < 0 || head.y >= 5000){
+        if (head.x < 0 || head.x >= 250 || head.y < 0 || head.y >= 250){
             gameOver();
         }
 
         if (!this.grow) {
-            this.snakeNodePlaces.remove(-1);
+            this.snakeNodePlaces.removeLast();
         } else {
             this.grow = false;
         }
     }
 
     public void setDirection(String direction) {
-        if (direction.equals("left") && this.direction.equals("right")) {
+        if (direction.equals("left") && !this.direction.equals("right")) {
             this.direction = direction;
-        } else if (direction.equals("right") && this.direction.equals("left")) {
+        } else if (direction.equals("right") && !this.direction.equals("left")) {
             this.direction = direction;
-        } else if (direction.equals("up") && this.direction.equals("down")) {
+        } else if (direction.equals("up") && !this.direction.equals("down")) {
             this.direction = direction;
-        } else if (direction.equals("down") && this.direction.equals("up")) {
+        } else if (direction.equals("down") && !this.direction.equals("up")) {
             this.direction = direction;
         }
     }
