@@ -3,20 +3,15 @@ package com.project.project1.member;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-
-import org.springframework.ui.Model;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 import java.security.Principal;
 
@@ -70,7 +65,7 @@ public class MemberController {
     }
 
     // 사용자 프로필 조회
-    @GetMapping("/member/profile")
+    @GetMapping("/profile")
     public String proFile(Principal principal, Model model) {
         String username = principal.getName();
         Member member = memberService.getProfile(username).orElse(null); // 사용자 정보가 없으면 null 반환
@@ -87,7 +82,7 @@ public class MemberController {
     }
 
     // 사용자 프로필 업데이트
-    @PostMapping("/member/update")
+    @PostMapping("/update")
     public String updateProfile(@RequestParam String username,
                                 @RequestParam String email,
                                 @RequestParam String password,

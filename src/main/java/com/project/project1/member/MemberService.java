@@ -55,6 +55,20 @@ public class MemberService {
         return member;
     }
 
+    public Member createTestScore(String username, String email, String password, String color, Integer score) {
+        Member member = new Member();
+
+        member.setUsername(username);
+        member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
+        member.setPassword(password);
+        member.setScore(score);
+        member.setColor(color);
+
+        memberRepository.save(member);
+        return member;
+    }
+
     public void modify(Member member, String username, String email, String password, String color) {
         member.setUsername(username);
         member.setEmail(email);
@@ -97,7 +111,7 @@ public class MemberService {
         return null;
     }
 
-    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId) {
+    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId, String profileImage) {
         Member member = new Member();
 
         member.setLoginId(loginId);
@@ -105,6 +119,7 @@ public class MemberService {
         member.setEmail(email);
         member.setProvider(provider);
         member.setProviderId(providerId);
+        member.setProfileImage(profileImage);
 
         memberRepository.save(member);
         return member;
