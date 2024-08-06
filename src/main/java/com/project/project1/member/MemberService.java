@@ -40,6 +40,19 @@ public class MemberService {
         return member;
     }
 
+    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId){
+        Member member = new Member();
+
+        member.setLoginId(loginId);
+        member.setUsername(username);
+        member.setEmail(email);
+        member.setProvider(provider);
+        member.setProviderId(providerId);
+
+        memberRepository.save(member);
+        return member;
+    }
+
     public void modify(Member member, String username, String email, String password)
     {
         member.setUsername(username);
