@@ -1,5 +1,6 @@
 package com.project.project1.game;
 
+import com.project.project1.member.MemberService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +19,11 @@ public class Snake {
     private boolean isAlive = true;
     private String direction;
     private boolean grow;
+    private MemberService memberService;
 
-    public Snake(Integer memberId){
+
+    public Snake(Integer memberId, MemberService memberService){
+        this.memberService = memberService;
         Random random = new Random();
         this.grow = false;
         int rand_x = random.nextInt(50, 200);
@@ -34,11 +38,30 @@ public class Snake {
 
     }
 
-    void gameOver(){
+    void gameOver() throws Exception {
+        for (Point point : snakeNodePlaces){
+            Experience experience = new Experience();
+            experience.setPosition(point);
+            GameService.experiences.add(
+                experience
+            );
+        }
+        memberService.reflectScore(memberId, snakeLength - 3);
         this.isAlive = false;
+        GameService.snakes.remove(this);
     }
 
-    void update(){
+    void update() throws Exception {
+        if (memberId == 2){
+            Random random = new Random();
+            int directionInt = random.nextInt(4);
+            if (directionInt == 0){
+                direction = turnLeft(direction);
+            } else if (directionInt == 1){
+                direction = turnRight(direction);
+            }
+        }
+
         Point head = new Point(this.snakeNodePlaces.get(0));
         switch (this.direction) {
             case "left":
@@ -63,7 +86,12 @@ public class Snake {
         if (!this.grow) {
             this.snakeNodePlaces.removeLast();
         } else {
+            this.snakeLength = Math.toIntExact(snakeNodePlaces.stream().count());
             this.grow = false;
+        }
+
+        if (isCollision()){
+            gameOver();
         }
     }
 
@@ -79,7 +107,7 @@ public class Snake {
         }
     }
 
-    public boolean isCollision(List<Snake> snakes) {
+    public boolean isCollision() {
         Point head = this.snakeNodePlaces.get(0);
         // Check collision with own body (ignore self-collision)
         for (int i = 1; i < this.snakeLength; i++) {
@@ -87,22 +115,70 @@ public class Snake {
                 return false; // Return false to indicate no death
             }
         }
-        // Check collision with other snakes
-        for (Snake snake : snakes) {
-            if (snake.id.equals(this.id)) continue;
-            for (Point segment : snake.snakeNodePlaces) {
-                if (segment.x.equals(head.x) & segment.y.equals(head.y)) {
-                    return true; // Return true to indicate death
+        try {
+            // Check collision with other snakes
+            for (int i = 0; i < GameService.experiences.stream().count(); i++) {
+                Snake snake = GameService.snakes.get(i);
+                if (snake.memberId.equals(this.memberId)) continue;
+                for (Point segment : snake.snakeNodePlaces) {
+                    if (segment.x.equals(head.x) & segment.y.equals(head.y)) {
+                        return true; // Return true to indicate death
+                    }
                 }
             }
+        } catch (Exception e){
+
+        }
+        try {
+            for (int i = 0; i<GameService.experiences.stream().count(); i++) {
+                Experience experience = GameService.experiences.get(i);
+                if (experience.getPosition().x.equals(snakeNodePlaces.get(0).x)
+                        && experience.getPosition().y.equals(snakeNodePlaces.get(0).y)) {
+                    eat(experience);
+                }
+            }
+        } catch (Exception e){
+
         }
         return false;
     }
 
-    public void eat() {
+    public void eat(Experience experience) {
+        GameService.experiences.remove(experience);
         this.grow = true;
     }
 
     public Snake() {}
+
+
+    private static String turnLeft(String direction) {
+        switch (direction) {
+            case "right":
+                return "up";
+            case "up":
+                return "left";
+            case "left":
+                return "down";
+            case "down":
+                return "right";
+            default:
+                return null;
+        }
+    }
+
+    private static String turnRight(String direction) {
+        switch (direction) {
+            case "right":
+                return "down";
+            case "down":
+                return "left";
+            case "left":
+                return "up";
+            case "up":
+                return "right";
+            default:
+                return null;
+        }
+    }
 }
 
