@@ -43,13 +43,13 @@ public class Member {
     //private Integer earthwormLength;
 
     // 지렁이 노드 리스트
-    //private List<Point> earthwormPlace;
+//    private List<Point> earthwormPlace;
 
     // 지렁이 방향 (-1, 0), (1, 0), (0, -1), (0, 1)
-    //private Point direction;
+//    private Point direction;
 }
-
-class Point{
-    private Integer x;
-    private Integer y;
-}
+//
+//class Point{
+//    private Integer x;
+//    private Integer y;
+//}

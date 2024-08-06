@@ -1,4 +1,4 @@
-package com.project.project1.chat;
+package com.project.project1.websocket;
 
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;

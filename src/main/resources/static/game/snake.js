@@ -184,15 +184,15 @@ function fetchGameFrame() {
         ]
     };
 
-/*
-    return fetch('/')
-        .then(response =>response.json())
-        .then(data => {
-            drawGameFrame(data);
-        })
-        .catch(error => console.error('Error fetching game frame:' error));
+    /*
+        return fetch('/')
+            .then(response =>response.json())
+            .then(data => {
+                drawGameFrame(data);
+            })
+            .catch(error => console.error('Error fetching game frame:' error));
 
- */
+     */
 }
 
 const gameFrameDTO = fetchGameFrame();
