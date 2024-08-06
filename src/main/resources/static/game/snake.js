@@ -43,8 +43,6 @@ const mapHeight = 5000; // Map height
 const scale = 20; // Size of each segment
 const speed = 100; // Speed of the game loop in ms
 
-var memberId = 1;
-
 let viewX = 0; // Viewport X offset
 let viewY = 0; // Viewport Y offset
 
@@ -70,7 +68,6 @@ class Snake {
             for (let segment of this.snakeNodePlaces) {
                 ctx.fillRect(segment.x * scale - viewX, segment.y * scale - viewY, scale, scale);
             }
-
             // 텍스트 색상 및 폰트 설정
             ctx.fillStyle = 'white';
             ctx.font = '12px Arial';
@@ -101,7 +98,7 @@ function drawGameFrame(gameFrameDTO) {
         snakes.push(snake);
 
         // viewX, viewY 값 player지렁이 위치로
-        // if (snakeDTO.memberid === memberId) {
+        if (snakeDTO.memberId === memberId) {
             let head = snake.snakeNodePlaces[0];
             viewX = head.x * scale - canvas.width / 2;
             viewY = head.y * scale - canvas.height / 2;
@@ -109,12 +106,17 @@ function drawGameFrame(gameFrameDTO) {
             // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
-        // }
+        }
     }
 
     // Draw each snake
     for (let snake of snakes) {
         snake.draw();
+    }
+
+    for (let experience of gameFrameDTO.experiences){
+        experience.x
+        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
 
     // Update the score
@@ -168,4 +170,4 @@ function fetchGameFrame() {
 
 setInterval(() => {
     stompClient.send("/app/gameOutput", {}, );
-}, 1000);
+}, 500);
