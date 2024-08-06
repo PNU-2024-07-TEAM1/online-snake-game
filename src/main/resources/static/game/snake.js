@@ -96,6 +96,9 @@ async function drawGameFrame(gameFrameDTO) {
             // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
+
+            // Update the score
+            updateScore(snake.snakeLength - 3);
         }
     }
 
@@ -114,8 +117,7 @@ async function drawGameFrame(gameFrameDTO) {
         window.location.href = '/main';
     }
 
-    // Update the score
-    // updateScore(score);
+
 
     // Draw boundaries for debugging
     ctx.strokeStyle = 'blue';
@@ -134,9 +136,16 @@ document.addEventListener('keydown', (event) => {
         sendInput('down');
     }
 });
+
+
+function updateScore(score) {
+    document.getElementById('score').textContent = `Score: ${score}`;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 // test
