@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="/home_background.css">
+    <style>
+        /* 제목 스타일 */
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+            font-size: 2.5em;
+        }
+
+        /* 버튼 컨테이너 스타일 */
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 0 10px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h1>Snake Game</h1>
+<div class="button-container">
+    <a href="/member/login" class="button">Login</a>
+    <a href="/member/signup" class="button">Signup</a>
+</div>
+<div class="scene"></div>
+<script src="/home_background.js"></script>
+</body>
+</html>

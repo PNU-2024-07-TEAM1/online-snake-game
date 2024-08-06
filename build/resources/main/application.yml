@@ -1,3 +1,5 @@
+server:
+  port: 8015
 spring:
   h2:
     console:
@@ -18,3 +20,8 @@ spring:
     hibernate:
       ddl-auto: update
 
+
+
+  web:
+    resources:
+      static-locations: classpath:/static/

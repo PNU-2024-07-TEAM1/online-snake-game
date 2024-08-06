@@ -1,6 +1,7 @@
 package com.project.project1.member;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Member getMember(String username) throws Exception {
         Optional<Member> member = memberRepository.findByUsername(username);
@@ -26,29 +28,38 @@ public class MemberService {
         return members.subList(0, Math.min(members.size(), num));
     }
 
-    public Member create(String username, String email, String password)
+    public Member create(String username, String email, String password, String color)
     {
         Member member = new Member();
 
         member.setUsername(username);
         member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
         member.setPassword(password);
+        member.setColor(color);
 
         memberRepository.save(member);
         return member;
     }
 
-    public void modify(Member member, String username, String email, String password)
+    public void modify(Member member, String username, String email, String password, String color)
     {
         member.setUsername(username);
         member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
         member.setPassword(password);
+        member.setColor(color);
 
         memberRepository.save(member);
     }
 
     public void delete(Member member) {
         this.memberRepository.delete(member);
+    }
+
+    // 사용자 프로필 조회
+    public Optional<Member> getProfile(String username) {
+        return memberRepository.findByUsername(username);
     }
 
     // 자기 랭킹 조회

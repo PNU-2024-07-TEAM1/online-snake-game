@@ -21,6 +21,8 @@ public class Member {
     @Column(unique = true)
     private String email;
 
+    private String color; // 지렁이 색
+
     //일단 보류
     //private List<String> chatting;
 
