@@ -31,10 +31,11 @@ public class Member {
     //일단 보류
     //private List<String> chatting;
 
-    private Integer score;
+    private Integer score = 0;
 
     private String provider;
     private String providerId;
+    private String profileImage;
 
     //일단 보류
     //private List<String> chatting;

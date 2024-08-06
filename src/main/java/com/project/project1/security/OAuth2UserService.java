@@ -42,12 +42,13 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserInfo.getEmail();
         String loginId = provider + "_" + providerId;
         String name = oAuth2UserInfo.getName();
+        String profileImage = oAuth2UserInfo.getProfileImage();
 
         Optional<Member> findMember = memberRepository.findByLoginId(loginId);
         Member member;
 
         if (findMember.isEmpty()) {
-            member = memberService.OAuth2Create(loginId, name, email, provider, providerId);
+            member = memberService.OAuth2Create(loginId, name, email, provider, providerId, profileImage);
         } else {
             member = findMember.get();
         }

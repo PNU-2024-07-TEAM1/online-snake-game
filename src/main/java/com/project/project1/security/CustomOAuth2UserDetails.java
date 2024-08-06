@@ -51,8 +51,11 @@ public class CustomOAuth2UserDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return member.getLoginId();
+        return member.getUsername();
     }
+
+    public String getLoginId() {return member.getLoginId();}
+    public String getProfileImage() {return member.getProfileImage();}
 
     @Override
     public boolean isAccountNonExpired() {
