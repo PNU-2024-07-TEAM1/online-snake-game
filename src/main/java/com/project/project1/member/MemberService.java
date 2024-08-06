@@ -14,6 +14,20 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public void reflectScore(Integer id, int score) throws Exception {
+        Optional<Member> optionalMember = memberRepository.findById(Long.valueOf(id));
+        Member member;
+        int lastScore = 0;
+        if (optionalMember.isPresent()){
+            member = optionalMember.get();
+        } else{
+            throw new Exception("member not found");
+        }
+        lastScore = member.getScore();
+        member.setScore(Math.max(lastScore, score));
+        memberRepository.save(member);
+    }
+
     public Member getMember(String username) throws Exception {
         Optional<Member> member = memberRepository.findByUsername(username);
         if (member.isPresent()) {
