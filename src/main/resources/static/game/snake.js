@@ -46,13 +46,14 @@ function resizeCanvas() {
     canvas.height = gameContainer.clientHeight;
 }
 class Snake {
-    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow) {
+    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username) {
         this.id = id;
         this.snakeLength = snakeLength;
         this.snakeNodePlaces = snakeNodePlaces;
         this.isAlive = isAlive;
         this.direction = direction;
         this.grow = grow;
+        this.username = username
     }
     draw() {
         ctx.fillStyle = this.id === 1 ? 'green' : 'blue';
@@ -67,7 +68,7 @@ class Snake {
             ctx.textBaseline = 'middle';
             // 머리 부분의 ID 표시
             let head = this.snakeNodePlaces[0];
-            ctx.fillText(this.id, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
+            ctx.fillText(this.username, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
         }
     }
 
@@ -138,7 +139,8 @@ async function drawGameFrame(gameFrameDTO) {
             snakeDTO.snakeNodePlaces,
             snakeDTO.alive,
             snakeDTO.direction,
-            snakeDTO.grow
+            snakeDTO.grow,
+            snakeDTO.username
         );
         snakes.push(snake);
 
@@ -195,6 +197,57 @@ function drawGameFrame2() {
             snakeDTO.alive,
             snakeDTO.direction,
             snakeDTO.grow
+        );
+        snake.update();
+        snakes.push(snake);
+
+        // viewX, viewY 값 player지렁이 위치로
+        if (snakeDTO.memberId === memberId) {
+            alive = true;
+
+            let head = snake.snakeNodePlaces[0];
+            viewX = head.x * scale - canvas.width / 2;
+            viewY = head.y * scale - canvas.height / 2;
+
+            // Constrain viewport to map boundaries
+            viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
+            viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
+        }
+    }
+
+    // Draw each snake
+    for (let snake of snakes) {
+        snake.draw();
+    }
+
+    for (let experience of globalGameFrameDTO.experiences) {
+        experience.x
+        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
+    }
+
+    // Update the score
+    // updateScore(score);
+
+    // Draw boundaries for debugging
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+}
+
+// local update 출력
+function drawGameFrame2() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var alive = false;
+    let snakes = [];
+    for (let snakeDTO of globalGameFrameDTO.snakes) {
+        let snake = new Snake(
+            snakeDTO.memberId,
+            snakeDTO.snakeLength,
+            snakeDTO.snakeNodePlaces,
+            snakeDTO.alive,
+            snakeDTO.direction,
+            snakeDTO.grow,
+            snakeDTO.username
         );
         snake.update();
         snakes.push(snake);
