@@ -17,6 +17,7 @@ public class Snake {
     private Integer snakeLength;
     private List<Point> snakeNodePlaces;
     private boolean isAlive = true;
+    private boolean isTurn = false;
     private String direction;
     private boolean grow;
     private MemberService memberService;
@@ -54,14 +55,19 @@ public class Snake {
     void update() throws Exception {
         if (memberId == 2){
             Random random = new Random();
-            int directionInt = random.nextInt(4);
+            int directionInt = random.nextInt(6);
             if (directionInt == 0){
                 direction = turnLeft(direction);
+                isTurn = true;
             } else if (directionInt == 1){
                 direction = turnRight(direction);
+                isTurn = true;
             }
         }
-
+        if (isTurn){
+            isTurn = false;
+            return;
+        }
         Point head = new Point(this.snakeNodePlaces.get(0));
         switch (this.direction) {
             case "left":
@@ -105,6 +111,8 @@ public class Snake {
         } else if (direction.equals("down") && !this.direction.equals("up")) {
             this.direction = direction;
         }
+
+        isTurn = true;
     }
 
     public boolean isCollision() {
