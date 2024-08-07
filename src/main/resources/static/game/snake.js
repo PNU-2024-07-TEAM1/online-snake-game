@@ -196,7 +196,8 @@ function drawGameFrame2() {
             snakeDTO.snakeNodePlaces,
             snakeDTO.alive,
             snakeDTO.direction,
-            snakeDTO.grow
+            snakeDTO.grow,
+            snakeDTO.username
         );
         snake.update();
         snakes.push(snake);
