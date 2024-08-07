@@ -16,6 +16,7 @@ stompClient.connect({}, function (frame) {
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
         //console.log(gameFrameDTO.body);
         drawGameFrame(JSON.parse(gameFrameDTO.body));
+        requestAnimationFrame(gameLoop);
     });
 });
 function scrollToBottom() {
@@ -330,20 +331,21 @@ setInterval(() => {
 }, 25);*/
 
 let lastUpdateTime = 0;
-const updateInterval = 30; // 애니메이션 업데이트 주기 (ms)
-const serverUpdateInterval = 270; // 서버와의 데이터 동기화 주기 (ms)
+const updateInterval = 25; // 애니메이션 업데이트 주기 (ms)
+const serverUpdateInterval = 250; // 서버와의 데이터 동기화 주기 (ms)
 
 function gameLoop(timestamp) {
     // 애니메이션 업데이트
     if (timestamp - lastUpdateTime >= updateInterval) {
         lastUpdateTime = timestamp;
-        if (toggle !== 10)
+        if (toggle < 9)
         {
             drawGameFrame_local(); // Local update
             toggle += 1;
         }
         else{
             toggle = 1;
+            return;
         }
 
     }
@@ -357,4 +359,3 @@ setInterval(() => {
 }, serverUpdateInterval);
 
 // 게임 루프 시작
-requestAnimationFrame(gameLoop);
