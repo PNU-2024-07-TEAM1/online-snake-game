@@ -3,16 +3,20 @@ var socket = new SockJS('/ws');
 var stompClient = Stomp.over(socket);
 
 let globalGameFrameDTO;
+let snakes = [];
+let experiences = [];
+
 stompClient.connect({}, function (frame) {
-    console.log('Connected: ' + frame);
+    //console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/messages', function (message) {
         var messageDTO = JSON.parse(message.body);
         document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
         scrollToBottom();
     });
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
-        console.log(gameFrameDTO.body);
+        //console.log(gameFrameDTO.body);
         drawGameFrame(JSON.parse(gameFrameDTO.body));
+        requestAnimationFrame(gameLoop);
     });
 });
 function scrollToBottom() {
@@ -46,17 +50,21 @@ function resizeCanvas() {
     canvas.height = gameContainer.clientHeight;
 }
 class Snake {
-    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username) {
+    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username, color) {
         this.id = id;
         this.snakeLength = snakeLength;
         this.snakeNodePlaces = snakeNodePlaces;
         this.isAlive = isAlive;
         this.direction = direction;
         this.grow = grow;
-        this.username = username
+        this.username = username;
+        this.color = color;
+
+        this.delX = 0
+        this.delY = 0
     }
     draw() {
-        ctx.fillStyle = this.id === 1 ? 'green' : 'blue';
+        ctx.fillStyle = this.color ? this.color : 'blue';
         if(this.isAlive) {
             for (let segment of this.snakeNodePlaces) {
                 ctx.fillRect(segment.x * scale - viewX, segment.y * scale - viewY, scale, scale);
@@ -94,36 +102,68 @@ class Snake {
         */
         // Update the position based on the current direction
         // First, create a copy of the current head to be updated
-        let head = { ...this.snakeNodePlaces[0]};
+        //let head = { ...this.snakeNodePlaces[0]};
+        /*
+                let firstSegment = this.snakeNodePlaces[0];
+
+                switch (this.direction) {
+                    case 'left':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x  - 0.1, y: firstSegment.y};
+                        break;
+                    case 'right':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x  + 0.1, y: firstSegment.y};
+                        break;
+                    case 'up':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y - 0.1};
+                        break;
+                    case 'down':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y + 0.1};
+                        break;
+                }
+        */
+
+        let newHead = { ...this.snakeNodePlaces[0] };
 
         switch (this.direction) {
             case 'left':
-                head.x -= 0.5;
+                newHead.x -= 0.1;
                 break;
             case 'right':
-                head.x += 0.5;
+                newHead.x += 0.1;
                 break;
             case 'up':
-                head.y -= 0.5;
+                newHead.y -= 0.1;
                 break;
             case 'down':
-                head.y += 0.5;
+                newHead.y += 0.1;
                 break;
+        }
+
+        // 새로운 머리 노드를 배열 앞에 추가합니다.
+        this.snakeNodePlaces.unshift(newHead);
+
+        // 이전 프레임 head 노드 제거
+        if (this.snakeNodePlaces.length > this.snakeLength + 1)
+        {
+            this.snakeNodePlaces.splice(1, 1)
         }
 
         if (this.snakeNodePlaces.length > 1) {
             let lastSegment = this.snakeNodePlaces[this.snakeNodePlaces.length - 1];
             let secondLastSegment = this.snakeNodePlaces[this.snakeNodePlaces.length - 2];
 
-            // Calculate the midpoint
-            let midX = (lastSegment.x + secondLastSegment.x) / 2;
-            let midY = (lastSegment.y + secondLastSegment.y) / 2;
+            if (this.delX === 0 && this.delY === 0)
+            {
+                // Calculate the delta
+                this.delX = (secondLastSegment.x - lastSegment.x) / 10;
+                this.delY = (secondLastSegment.y - lastSegment.y) / 10;
+            }
 
             // Update the last segment to the midpoint
-            this.snakeNodePlaces[this.snakeNodePlaces.length - 1] = { x: midX, y: midY };
+            this.snakeNodePlaces[this.snakeNodePlaces.length - 1] = { x: lastSegment.x +  this.delX, y: lastSegment.y + this.delY };
         }
 
-        this.snakeNodePlaces.unshift(head);
+        //  this.snakeNodePlaces.unshift(head);
     }
 }
 // 프레임 단순 출력
@@ -131,7 +171,7 @@ async function drawGameFrame(gameFrameDTO) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     globalGameFrameDTO = gameFrameDTO;
     var alive = false;
-    let snakes = [];
+    snakes = [];
     for (let snakeDTO of gameFrameDTO.snakes) {
         let snake = new Snake(
             snakeDTO.memberId,
@@ -140,7 +180,8 @@ async function drawGameFrame(gameFrameDTO) {
             snakeDTO.alive,
             snakeDTO.direction,
             snakeDTO.grow,
-            snakeDTO.username
+            snakeDTO.username,
+            snakeDTO.color
         );
         snakes.push(snake);
 
@@ -166,7 +207,8 @@ async function drawGameFrame(gameFrameDTO) {
         snake.draw();
     }
 
-    for (let experience of gameFrameDTO.experiences) {
+    experiences = gameFrameDTO.experiences
+    for (let experience of experiences) {
         experience.x
         ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
@@ -185,30 +227,24 @@ async function drawGameFrame(gameFrameDTO) {
 }
 
 // local update 출력
-function drawGameFrame2() {
+function drawGameFrame_local() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var alive = false;
-    let snakes = [];
-    for (let snakeDTO of globalGameFrameDTO.snakes) {
-        let snake = new Snake(
-            snakeDTO.memberId,
-            snakeDTO.snakeLength,
-            snakeDTO.snakeNodePlaces,
-            snakeDTO.alive,
-            snakeDTO.direction,
-            snakeDTO.grow,
-            snakeDTO.username
-        );
+    //let snakes = [];
+    for (let snake of snakes) {
+
         snake.update();
-        snakes.push(snake);
 
         // viewX, viewY 값 player지렁이 위치로
-        if (snakeDTO.memberId === memberId) {
+        console.log(snake, memberId);
+        if (snake.id === memberId) {
             alive = true;
 
             let head = snake.snakeNodePlaces[0];
             viewX = head.x * scale - canvas.width / 2;
             viewY = head.y * scale - canvas.height / 2;
+
+            console.log(viewX, viewY);
 
             // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
@@ -221,108 +257,7 @@ function drawGameFrame2() {
         snake.draw();
     }
 
-    for (let experience of globalGameFrameDTO.experiences) {
-        experience.x
-        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
-    }
-
-    // Update the score
-    // updateScore(score);
-
-    // Draw boundaries for debugging
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
-}
-
-// local update 출력
-function drawGameFrame2() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    var alive = false;
-    let snakes = [];
-    for (let snakeDTO of globalGameFrameDTO.snakes) {
-        let snake = new Snake(
-            snakeDTO.memberId,
-            snakeDTO.snakeLength,
-            snakeDTO.snakeNodePlaces,
-            snakeDTO.alive,
-            snakeDTO.direction,
-            snakeDTO.grow
-        );
-        snake.update();
-        snakes.push(snake);
-
-        // viewX, viewY 값 player지렁이 위치로
-        if (snakeDTO.memberId === memberId) {
-            alive = true;
-
-            let head = snake.snakeNodePlaces[0];
-            viewX = head.x * scale - canvas.width / 2;
-            viewY = head.y * scale - canvas.height / 2;
-
-            // Constrain viewport to map boundaries
-            viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
-            viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
-        }
-    }
-
-    // Draw each snake
-    for (let snake of snakes) {
-        snake.draw();
-    }
-
-    for (let experience of globalGameFrameDTO.experiences) {
-        experience.x
-        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
-    }
-
-    // Update the score
-    // updateScore(score);
-
-    // Draw boundaries for debugging
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
-}
-
-// local update 출력
-function drawGameFrame2() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    var alive = false;
-    let snakes = [];
-    for (let snakeDTO of globalGameFrameDTO.snakes) {
-        let snake = new Snake(
-            snakeDTO.memberId,
-            snakeDTO.snakeLength,
-            snakeDTO.snakeNodePlaces,
-            snakeDTO.alive,
-            snakeDTO.direction,
-            snakeDTO.grow,
-            snakeDTO.username
-        );
-        snake.update();
-        snakes.push(snake);
-
-        // viewX, viewY 값 player지렁이 위치로
-        if (snakeDTO.memberId === memberId) {
-            alive = true;
-
-            let head = snake.snakeNodePlaces[0];
-            viewX = head.x * scale - canvas.width / 2;
-            viewY = head.y * scale - canvas.height / 2;
-
-            // Constrain viewport to map boundaries
-            viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
-            viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
-        }
-    }
-
-    // Draw each snake
-    for (let snake of snakes) {
-        snake.draw();
-    }
-
-    for (let experience of globalGameFrameDTO.experiences) {
+    for (let experience of experiences) {
         experience.x
         ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
@@ -382,16 +317,47 @@ function fetchGameFrame() {
 // const gameFrameDTO = fetchGameFrame();
 // drawGameFrame(gameFrameDTO);
 
-let toggle = 1;
+let toggle = 9;
 
+/*
 setInterval(() => {
-    if (toggle)
+    if (toggle === 10)
     {
         stompClient.send("/app/gameOutput", {}, );
-        toggle = 0;
-    }
-    else{
-        drawGameFrame2();
         toggle = 1;
     }
-}, 125);
+    else{
+        drawGameFrame_local(toggle);
+        toggle += 1;
+    }
+}, 25);*/
+
+let lastUpdateTime = 0;
+const updateInterval = 25; // 애니메이션 업데이트 주기 (ms)
+const serverUpdateInterval = 250; // 서버와의 데이터 동기화 주기 (ms)
+
+function gameLoop(timestamp) {
+    // 애니메이션 업데이트
+    if (timestamp - lastUpdateTime >= updateInterval) {
+        lastUpdateTime = timestamp;
+        if (toggle < 9)
+        {
+            drawGameFrame_local(); // Local update
+            toggle += 1;
+        }
+        else{
+            toggle = 1;
+            return;
+        }
+
+    }
+
+    requestAnimationFrame(gameLoop); // 다음 프레임을 요청
+}
+
+// 서버와 데이터 동기화
+setInterval(() => {
+    stompClient.send("/app/gameOutput", {}); // 서버로 데이터 전송
+}, serverUpdateInterval);
+
+// 게임 루프 시작

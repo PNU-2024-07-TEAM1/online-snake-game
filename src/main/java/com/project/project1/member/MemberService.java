@@ -14,6 +14,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public void editSetting(String curUsername, String newUsername, String newColor) throws Exception {
+        Member member = this.getMember(curUsername);
+        member.setColor(newColor);
+        member.setUsername(newUsername);
+        memberRepository.save(member);
+    }
+
     public void reflectScore(Integer id, int score) throws Exception {
         Optional<Member> optionalMember = memberRepository.findById(Long.valueOf(id));
         Member member;
@@ -23,7 +30,11 @@ public class MemberService {
         } else{
             throw new Exception("member not found");
         }
-        lastScore = member.getScore();
+        System.out.println("score reflected");
+        Integer temp = member.getScore();
+        if (temp != null){
+            lastScore = temp;
+        }
         member.setScore(Math.max(lastScore, score));
         memberRepository.save(member);
     }
