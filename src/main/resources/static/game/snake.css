@@ -60,3 +60,10 @@ canvas {
     font-weight: 400;
     font-style: normal;
 }
+
+.scrollable-container {
+    flex: 0 0 80%;
+    border: 1px solid #ccc; /* 테두리 설정 */
+    overflow-y: auto; /* 수직 스크롤 가능 */
+    overflow-x: hidden; /* 수평 스크롤 숨기기 */
+}
