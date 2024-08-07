@@ -50,20 +50,21 @@ function resizeCanvas() {
     canvas.height = gameContainer.clientHeight;
 }
 class Snake {
-    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username) {
+    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username, color) {
         this.id = id;
         this.snakeLength = snakeLength;
         this.snakeNodePlaces = snakeNodePlaces;
         this.isAlive = isAlive;
         this.direction = direction;
         this.grow = grow;
-        this.username = username
+        this.username = username;
+        this.color = color;
 
         this.delX = 0
         this.delY = 0
     }
     draw() {
-        ctx.fillStyle = this.id === 1 ? 'green' : 'blue';
+        ctx.fillStyle = this.color ? this.color : 'blue';
         if(this.isAlive) {
             for (let segment of this.snakeNodePlaces) {
                 ctx.fillRect(segment.x * scale - viewX, segment.y * scale - viewY, scale, scale);
@@ -102,24 +103,24 @@ class Snake {
         // Update the position based on the current direction
         // First, create a copy of the current head to be updated
         //let head = { ...this.snakeNodePlaces[0]};
-/*
-        let firstSegment = this.snakeNodePlaces[0];
+        /*
+                let firstSegment = this.snakeNodePlaces[0];
 
-        switch (this.direction) {
-            case 'left':
-                this.snakeNodePlaces[0] = { x: firstSegment.x  - 0.1, y: firstSegment.y};
-                break;
-            case 'right':
-                this.snakeNodePlaces[0] = { x: firstSegment.x  + 0.1, y: firstSegment.y};
-                break;
-            case 'up':
-                this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y - 0.1};
-                break;
-            case 'down':
-                this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y + 0.1};
-                break;
-        }
-*/
+                switch (this.direction) {
+                    case 'left':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x  - 0.1, y: firstSegment.y};
+                        break;
+                    case 'right':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x  + 0.1, y: firstSegment.y};
+                        break;
+                    case 'up':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y - 0.1};
+                        break;
+                    case 'down':
+                        this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y + 0.1};
+                        break;
+                }
+        */
 
         let newHead = { ...this.snakeNodePlaces[0] };
 
@@ -179,7 +180,8 @@ async function drawGameFrame(gameFrameDTO) {
             snakeDTO.alive,
             snakeDTO.direction,
             snakeDTO.grow,
-            snakeDTO.username
+            snakeDTO.username,
+            snakeDTO.color
         );
         snakes.push(snake);
 
