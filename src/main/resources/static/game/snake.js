@@ -16,6 +16,7 @@ stompClient.connect({}, function (frame) {
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
         //console.log(gameFrameDTO.body);
         drawGameFrame(JSON.parse(gameFrameDTO.body));
+        requestAnimationFrame(gameLoop);
     });
 });
 function scrollToBottom() {
@@ -101,7 +102,7 @@ class Snake {
         // Update the position based on the current direction
         // First, create a copy of the current head to be updated
         //let head = { ...this.snakeNodePlaces[0]};
-
+/*
         let firstSegment = this.snakeNodePlaces[0];
 
         switch (this.direction) {
@@ -117,6 +118,33 @@ class Snake {
             case 'down':
                 this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y + 0.1};
                 break;
+        }
+*/
+
+        let newHead = { ...this.snakeNodePlaces[0] };
+
+        switch (this.direction) {
+            case 'left':
+                newHead.x -= 0.1;
+                break;
+            case 'right':
+                newHead.x += 0.1;
+                break;
+            case 'up':
+                newHead.y -= 0.1;
+                break;
+            case 'down':
+                newHead.y += 0.1;
+                break;
+        }
+
+        // 새로운 머리 노드를 배열 앞에 추가합니다.
+        this.snakeNodePlaces.unshift(newHead);
+
+        // 이전 프레임 head 노드 제거
+        if (this.snakeNodePlaces.length > this.snakeLength + 1)
+        {
+            this.snakeNodePlaces.splice(1, 1)
         }
 
         if (this.snakeNodePlaces.length > 1) {
@@ -287,7 +315,7 @@ function fetchGameFrame() {
 // const gameFrameDTO = fetchGameFrame();
 // drawGameFrame(gameFrameDTO);
 
-let toggle = 10;
+let toggle = 9;
 
 /*
 setInterval(() => {
@@ -304,14 +332,22 @@ setInterval(() => {
 
 let lastUpdateTime = 0;
 const updateInterval = 25; // 애니메이션 업데이트 주기 (ms)
-const serverUpdateInterval = 500; // 서버와의 데이터 동기화 주기 (ms)
+const serverUpdateInterval = 250; // 서버와의 데이터 동기화 주기 (ms)
 
 function gameLoop(timestamp) {
     // 애니메이션 업데이트
     if (timestamp - lastUpdateTime >= updateInterval) {
         lastUpdateTime = timestamp;
+        if (toggle < 9)
+        {
+            drawGameFrame_local(); // Local update
+            toggle += 1;
+        }
+        else{
+            toggle = 1;
+            return;
+        }
 
-        drawGameFrame_local(); // Local update
     }
 
     requestAnimationFrame(gameLoop); // 다음 프레임을 요청
@@ -323,4 +359,3 @@ setInterval(() => {
 }, serverUpdateInterval);
 
 // 게임 루프 시작
-requestAnimationFrame(gameLoop);

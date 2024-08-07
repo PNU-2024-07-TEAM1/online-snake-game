@@ -18,7 +18,10 @@ public class Snake {
     private Integer snakeLength;
     private List<Point> snakeNodePlaces;
     private boolean isAlive = true;
+    private boolean isTurn = false;
+    private boolean isTurning = false;
     private String direction;
+    private String lastDirection;
     private boolean grow;
     private MemberService memberService;
     private String username;
@@ -40,6 +43,7 @@ public class Snake {
         Member member = memberService.getMember(memberId);
         this.username = member.getUsername();
         this.color = member.getColor();
+        lastDirection = this.direction;
     }
 
     void gameOver() throws Exception {
@@ -56,18 +60,37 @@ public class Snake {
     }
 
     void update() throws Exception {
-        if (memberId == 2){
-            Random random = new Random();
-            int directionInt = random.nextInt(4);
-            if (directionInt == 0){
-                direction = turnLeft(direction);
-            } else if (directionInt == 1){
-                direction = turnRight(direction);
+        if (!isTurn) {
+            if (memberId == 2) {
+                Random random = new Random();
+                int directionInt = random.nextInt(6);
+                if (directionInt == 0) {
+                    lastDirection = direction;
+                    direction = turnLeft(direction);
+                    isTurn = true;
+                } else if (directionInt == 1) {
+                    lastDirection = direction;
+                    direction = turnRight(direction);
+
+                    isTurn = true;
+                }
             }
         }
 
+            if (isTurn){
+                isTurn = false;
+                lastDirection = direction;
+
+                isTurning = true;
+
+            }
+
+
+
+
+
         Point head = new Point(this.snakeNodePlaces.get(0));
-        switch (this.direction) {
+        switch (this.lastDirection) {
             case "left":
                 head.x -= 1;
                 break;
@@ -97,18 +120,31 @@ public class Snake {
         if (isCollision()){
             gameOver();
         }
+        lastDirection = direction;
     }
 
     public void setDirection(String direction) {
-        if (direction.equals("left") && !this.direction.equals("right")) {
+        if (isTurn)
+            return;
+        if (direction.equals("left") && !this.direction.equals("left") && !this.direction.equals("right")) {
+            lastDirection = this.direction;
             this.direction = direction;
-        } else if (direction.equals("right") && !this.direction.equals("left")) {
+            isTurn = true;
+        } else if (direction.equals("right") && !this.direction.equals("right") && !this.direction.equals("left")) {
+            lastDirection = this.direction;
             this.direction = direction;
-        } else if (direction.equals("up") && !this.direction.equals("down")) {
+            isTurn = true;
+        } else if (direction.equals("up") && !this.direction.equals("up") && !this.direction.equals("down")) {
+            lastDirection = this.direction;
             this.direction = direction;
-        } else if (direction.equals("down") && !this.direction.equals("up")) {
+            isTurn = true;
+        } else if (direction.equals("down") && !this.direction.equals("down") && !this.direction.equals("up")) {
+            lastDirection = this.direction;
             this.direction = direction;
+            isTurn = true;
         }
+
+
     }
 
     public boolean isCollision() {
