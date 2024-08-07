@@ -18,7 +18,11 @@
             height: 100%;
             width: 100%;
             min-height: 100vh;
-            background: url('beautiful-night-sky-with-shiny-stars.jpg') no-repeat center center fixed; /* Replace with your background image URL */
+            background-color: #1a1a2e; /* 디폴트 배경 색상 */
+            background-image: url('beautiful-night-sky-with-shiny-stars.jpg'); /* 배경 이미지 */
+            background-repeat: no-repeat; /* 배경 이미지를 반복하지 않음 */
+            background-position: center center; /* 배경 이미지를 중앙에 위치 */
+            background-attachment: fixed; /* 배경 이미지를 스크롤하지 않음 */
             background-size: cover;
             display: flex;
             align-items: center;
@@ -209,6 +213,87 @@
                 font-size: 1rem;
             }
         }
+
+
+
+        /* 기본 모달 스타일 */
+        .modal {
+            display: none; /* 기본적으로 숨김 상태 */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        /* 모달 콘텐츠 스타일 */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        /* 닫기 버튼 스타일 */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 폼과 라벨 스타일 */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"] {
+            margin-bottom: 10px;
+        }
+
+        /* 색상 선택기 스타일 */
+        .color-picker {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="color"] {
+            border: none;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            -webkit-appearance: none; /* 크롬 및 사파리에서 기본 스타일 제거 */
+            appearance: none; /* 다른 브라우저에서 기본 스타일 제거 */
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border-radius: 50%;
+        }
+
+        /* 제출 버튼 스타일 */
+        input[type="submit"] {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -243,11 +328,70 @@
         <div id="buttons">
             <a href="/member/logout" class="button exit">Logout</a>
             <a href="/game/snake" class="button continue">Start Game</a>
-            <a class="button exit">Settings</a>
+            <a class="button exit" id="settings-btn">Settings</a>
         </div>
     </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Settings</h2>
+
+            <form th:action="@{/edit}" method="post">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"  th:value="${curUserName}">
+
+                <label for="color">Favorite Color</label>
+                <div class="color-picker">
+                    <input type="color" id="color" name="color" th:value="${curColor}">
+                </div>
+
+                <input type="submit" value="Save Settings" onclick="">
+            </form>
+        </div>
+    </div>
+
 </div>
+<script>
+    // Get the modal
+    var modal = document.getElementById("settingsModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("settings-btn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // Get the color display element
+    var colorDisplay = document.getElementById("color-display");
+
+    // Get the color input element
+    var colorInput = document.getElementById("color");
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
+        modal.style.display = "block";
+        colorDisplay.style.backgroundColor = colorInput.value;
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Update the color display when the color input changes
+    colorDisplay.oninput = function() {
+        colorDisplay.style.backgroundColor = colorInput.value;
+    }
+
+</script>
 </body>
 </html>
-``
-

@@ -30,7 +30,17 @@ public class GameService {
 
     void addSnake(Member member) throws Exception {
         Snake snake = new Snake(member.getId(), memberService);
-
+        if (!member.getUsername().equals("computer")){
+            try {
+                for (int i = 0; i<snakes.stream().count(); i++){
+                    if (snakes.get(i).getMemberId().equals(member.getId())){
+                        return;
+                    }
+                }
+            } catch (Exception e){
+                
+            }
+        }
         snakes.add(snake);
     }
 
