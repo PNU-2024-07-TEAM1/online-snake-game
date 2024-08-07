@@ -1,5 +1,6 @@
 package com.project.project1.game;
 
+import com.project.project1.member.Member;
 import com.project.project1.member.MemberService;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Snake {
     private boolean grow;
     private MemberService memberService;
     private String username;
+    private String color;
 
     public Snake(Integer memberId, MemberService memberService) throws Exception {
         this.memberService = memberService;
@@ -38,8 +40,10 @@ public class Snake {
             snakeNodePlaces.add(new Point(rand_x + i, rand_y));
         }
         this.direction = Direction.LEFT.getString();
+        Member member = memberService.getMember(memberId);
+        this.username = member.getUsername();
+        this.color = member.getColor();
         lastDirection = this.direction;
-        this.username = memberService.getMember(memberId).getUsername();
     }
 
     void gameOver() throws Exception {
