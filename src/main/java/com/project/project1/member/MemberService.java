@@ -23,7 +23,11 @@ public class MemberService {
         } else{
             throw new Exception("member not found");
         }
-        lastScore = member.getScore();
+        System.out.println("score reflected");
+        Integer temp = member.getScore();
+        if (temp != null){
+            lastScore = temp;
+        }
         member.setScore(Math.max(lastScore, score));
         memberRepository.save(member);
     }
