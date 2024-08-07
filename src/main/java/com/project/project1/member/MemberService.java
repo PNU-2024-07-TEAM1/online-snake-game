@@ -36,6 +36,14 @@ public class MemberService {
         throw new Exception("Member not found");
     }
 
+    public Member getMember(int memberId) throws Exception {
+        Optional<Member> member = memberRepository.findById(memberId);
+        if (member.isPresent()) {
+            return member.get();
+        }
+        throw new Exception("Member not found");
+    }
+
     public List<Member> getRanking(int num) {
         List<Member> members = memberRepository.findAllByOrderByScoreDesc();
 

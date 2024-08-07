@@ -51,8 +51,13 @@ public class GameController {
 
     @MessageMapping("/gameInput")
     public void gameInput(String direction, Principal principal) throws Exception {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        CustomOAuth2UserDetails customOAuth2UserDetails = (CustomOAuth2UserDetails)principal;
+
         Snake snake;
+        System.out.println(principal.getName());
         if (principal != null){
+
             snake = gameService.getSnake(
                     memberRepository.findByUsername(principal.getName()).get().getId()
             );
