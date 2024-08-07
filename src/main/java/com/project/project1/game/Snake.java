@@ -20,9 +20,9 @@ public class Snake {
     private String direction;
     private boolean grow;
     private MemberService memberService;
+    private String username;
 
-
-    public Snake(Integer memberId, MemberService memberService){
+    public Snake(Integer memberId, MemberService memberService) throws Exception {
         this.memberService = memberService;
         Random random = new Random();
         this.grow = false;
@@ -35,7 +35,7 @@ public class Snake {
             snakeNodePlaces.add(new Point(rand_x + i, rand_y));
         }
         this.direction = Direction.LEFT.getString();
-
+        this.username = memberService.getMember(memberId).getUsername();
     }
 
     void gameOver() throws Exception {
