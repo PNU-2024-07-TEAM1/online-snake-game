@@ -46,7 +46,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     // Redis (sorted set 사용을 위함
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'io.lettuce.core:lettuce-core'
+    //implementation 'io.lettuce.core:lettuce-core'
+
+    //implementation 'io.lettuce.core:lettuce-core:6.1.5' // 최신 버전 번호로 대체
 }
 
 tasks.named('test') {
