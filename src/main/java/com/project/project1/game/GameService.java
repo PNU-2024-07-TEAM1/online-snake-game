@@ -78,7 +78,7 @@ public class GameService {
 
 
 
-    @Scheduled(fixedRate = 270)
+    @Scheduled(fixedRate = 250)
     public GameFrameDTO updateGameFrame() {
         try {
             for (int i = 0; i<snakes.stream().count(); i++){
