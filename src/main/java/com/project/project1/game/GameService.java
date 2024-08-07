@@ -29,7 +29,7 @@ public class GameService {
     }
 
     void addSnake(Member member) throws Exception {
-        Snake snake = new Snake(member.getId());
+        Snake snake = new Snake(member.getId(), memberService);
 
         snakes.add(snake);
     }
@@ -68,7 +68,7 @@ public class GameService {
 
 
 
-    @Scheduled(fixedRate = 500)
+    @Scheduled(fixedRate = 250)
     public GameFrameDTO updateGameFrame() {
         try {
             for (int i = 0; i<snakes.stream().count(); i++){

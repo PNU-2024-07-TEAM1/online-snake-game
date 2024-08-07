@@ -1,5 +1,6 @@
 package com.project.project1.game;
 
+import com.project.project1.member.MemberService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +19,11 @@ public class Snake {
     private boolean isAlive = true;
     private String direction;
     private boolean grow;
+    private MemberService memberService;
 
-    public Snake(Integer memberId){
+
+    public Snake(Integer memberId, MemberService memberService){
+        this.memberService = memberService;
         Random random = new Random();
         this.grow = false;
         int rand_x = random.nextInt(50, 200);
@@ -34,7 +38,7 @@ public class Snake {
 
     }
 
-    void gameOver(){
+    void gameOver() throws Exception {
         for (Point point : snakeNodePlaces){
             Experience experience = new Experience();
             experience.setPosition(point);
@@ -42,11 +46,12 @@ public class Snake {
                 experience
             );
         }
+        memberService.reflectScore(memberId, snakeLength - 3);
         this.isAlive = false;
         GameService.snakes.remove(this);
     }
 
-    void update(){
+    void update() throws Exception {
         if (memberId == 2){
             Random random = new Random();
             int directionInt = random.nextInt(4);
@@ -81,6 +86,7 @@ public class Snake {
         if (!this.grow) {
             this.snakeNodePlaces.removeLast();
         } else {
+            this.snakeLength = Math.toIntExact(snakeNodePlaces.stream().count());
             this.grow = false;
         }
 

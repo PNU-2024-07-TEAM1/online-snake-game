@@ -14,6 +14,20 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public void reflectScore(Integer id, int score) throws Exception {
+        Optional<Member> optionalMember = memberRepository.findById(Long.valueOf(id));
+        Member member;
+        int lastScore = 0;
+        if (optionalMember.isPresent()){
+            member = optionalMember.get();
+        } else{
+            throw new Exception("member not found");
+        }
+        lastScore = member.getScore();
+        member.setScore(Math.max(lastScore, score));
+        memberRepository.save(member);
+    }
+
     public Member getMember(String username) throws Exception {
         Optional<Member> member = memberRepository.findByUsername(username);
         if (member.isPresent()) {
@@ -35,6 +49,20 @@ public class MemberService {
         member.setEmail(email);
         member.setPassword(passwordEncoder.encode(password));
         member.setPassword(password);
+        member.setColor(color);
+
+        memberRepository.save(member);
+        return member;
+    }
+
+    public Member createTestScore(String username, String email, String password, String color, Integer score) {
+        Member member = new Member();
+
+        member.setUsername(username);
+        member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
+        member.setPassword(password);
+        member.setScore(score);
         member.setColor(color);
 
         memberRepository.save(member);
@@ -83,7 +111,7 @@ public class MemberService {
         return null;
     }
 
-    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId) {
+    public Member OAuth2Create(String loginId, String username, String email, String provider, String providerId, String profileImage) {
         Member member = new Member();
 
         member.setLoginId(loginId);
@@ -91,6 +119,7 @@ public class MemberService {
         member.setEmail(email);
         member.setProvider(provider);
         member.setProviderId(providerId);
+        member.setProfileImage(profileImage);
 
         memberRepository.save(member);
         return member;

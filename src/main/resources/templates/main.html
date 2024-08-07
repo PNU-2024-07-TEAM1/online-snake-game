@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100%;
+            width: 100%;
+            min-height: 100vh;
+            background: url('beautiful-night-sky-with-shiny-stars.jpg') no-repeat center center fixed; /* Replace with your background image URL */
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Rubik", sans-serif;
+            color: #141a39;
+        }
+
+        #box {
+            display: flex;
+            width: 80%; /* Width of the entire box */
+            max-width: 1200px; /* Optional max-width */
+            height: 80%;
+            gap: 20px; /* Space between the leaderboard and profile section */
+        }
+
+        .leaderboard {
+            width: 320px; /* Adjust width of leaderboard */
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 5px 15px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto; /* Added vertical scroll if content overflows */
+            position: relative;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .leaderboard h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #141a39;
+        }
+
+        .leaderboard tr {
+            transition: all 0.2s ease-in-out;
+            border-radius: 0.2rem;
+        }
+
+        .leaderboard tr:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 5px 15px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .leaderboard .rank-1 {
+            background-color: #FFD700; /* Gold */
+            color: #fff;
+        }
+
+        .leaderboard .rank-2 {
+            background-color: #C0C0C0; /* Silver */
+            color: #fff;
+        }
+
+        .leaderboard .rank-3 {
+            background-color: #CD7F32; /* Bronze */
+            color: #fff;
+        }
+
+        .leaderboard td {
+            padding: 10px;
+            font-size: 1.2rem;
+        }
+
+        .leaderboard .number {
+            font-weight: bold;
+        }
+
+        .leaderboard .points {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .profile-section {
+            flex: 1; /* Takes remaining space */
+            max-width: calc(100% - 340px); /* Adjust based on leaderboard width and gap */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 5px 15px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .profile-section img {
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .profile-section h1 {
+            margin: 10px 0;
+            font-size: 1.8rem;
+        }
+
+        .welcome-message {
+            font-size: 1rem;
+            color: #7e7f86;
+            margin-bottom: 20px;
+        }
+
+        a {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #buttons {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 20px;
+        }
+
+        .button {
+            width: 11rem;
+            height: 3rem;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            border-radius: 2rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .button.exit {
+            color: #7e7f86;
+            background-color: #fff;
+            border: 1px solid transparent;
+        }
+
+        .button.exit:hover {
+            border-color: #5c5be5;
+        }
+
+        .button.continue {
+            color: #fff;
+            background-color: #5c5be5;
+            border-bottom: 2px solid #3838b8;
+        }
+
+        .button.continue:active {
+            border-bottom: none;
+        }
+
+        @media (max-width: 740px) {
+            .leaderboard td {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .leaderboard td {
+                font-size: 0.9rem;
+            }
+
+            .profile-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .button {
+                width: 9rem;
+                height: 2.5rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .leaderboard td {
+                font-size: 0.8rem;
+            }
+
+            .profile-section h1 {
+                font-size: 1.3rem;
+            }
+
+            .button {
+                width: 8rem;
+                height: 2rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <!-- Leaderboard Section -->
+    <div class="leaderboard">
+        <h2>Leaderboard</h2>
+        <table>
+            <thead>
+            <tr>
+                <th class="number">Rank</th>
+                <th class="name">Username</th>
+                <th class="points">Score</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Uncomment and replace with Thymeleaf code -->
+            <tr th:each="member, iter : ${memberList}" th:classappend="${iter.index == 0 ? 'rank-1' : (iter.index == 1 ? 'rank-2' : (iter.index == 2 ? 'rank-3' : ''))}">
+                <td class="number" th:text="${iter.index + 1}"></td>
+                <td class="name" th:text="${member.username}"></td>
+                <td class="points" th:text="${member.score}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Profile and Buttons Section -->
+    <div class="profile-section">
+        <img th:src="${curUserProfileImage}" alt="Profile Picture"> <!-- Replace with actual image source -->
+        <h1 th:text="${curUserName}"></h1>
+        <p class="welcome-message">로그인 하신 걸 환영합니다!</p>
+        <div id="buttons">
+            <a href="/member/logout" class="button exit">Logout</a>
+            <a href="/game/snake" class="button continue">Start Game</a>
+            <a class="button exit">Settings</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+``
+

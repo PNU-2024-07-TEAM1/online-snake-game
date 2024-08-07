@@ -1,6 +1,8 @@
 // 웹 소켓 관련 코드
 var socket = new SockJS('/ws');
 var stompClient = Stomp.over(socket);
+
+let globalGameFrameDTO;
 stompClient.connect({}, function (frame) {
     console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/messages', function (message) {
@@ -68,10 +70,65 @@ class Snake {
             ctx.fillText(this.id, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
         }
     }
+
+    update() {
+        // Update the position based on the current direction
+        /*for(let node of this.snakeNodePlaces)
+        {
+            switch (this.direction) {
+                case 'left':
+                    node.x -= 0.5;
+                    break;
+                case 'right':
+                    node.x += 0.5;
+                    break;
+                case 'up':
+                    node.y -= 0.5;
+                    break;
+                case 'down':
+                    node.y += 0.5;
+                    break;
+            }
+        }
+        */
+        // Update the position based on the current direction
+        // First, create a copy of the current head to be updated
+        let head = { ...this.snakeNodePlaces[0]};
+
+        switch (this.direction) {
+            case 'left':
+                head.x -= 0.5;
+                break;
+            case 'right':
+                head.x += 0.5;
+                break;
+            case 'up':
+                head.y -= 0.5;
+                break;
+            case 'down':
+                head.y += 0.5;
+                break;
+        }
+
+        if (this.snakeNodePlaces.length > 1) {
+            let lastSegment = this.snakeNodePlaces[this.snakeNodePlaces.length - 1];
+            let secondLastSegment = this.snakeNodePlaces[this.snakeNodePlaces.length - 2];
+
+            // Calculate the midpoint
+            let midX = (lastSegment.x + secondLastSegment.x) / 2;
+            let midY = (lastSegment.y + secondLastSegment.y) / 2;
+
+            // Update the last segment to the midpoint
+            this.snakeNodePlaces[this.snakeNodePlaces.length - 1] = { x: midX, y: midY };
+        }
+
+        this.snakeNodePlaces.unshift(head);
+    }
 }
 // 프레임 단순 출력
 async function drawGameFrame(gameFrameDTO) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    globalGameFrameDTO = gameFrameDTO;
     var alive = false;
     let snakes = [];
     for (let snakeDTO of gameFrameDTO.snakes) {
@@ -96,6 +153,9 @@ async function drawGameFrame(gameFrameDTO) {
             // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
+
+            // Update the score
+            updateScore(snake.snakeLength - 3);
         }
     }
 
@@ -112,6 +172,55 @@ async function drawGameFrame(gameFrameDTO) {
     if (!alive) {
         await sleep(1000);
         window.location.href = '/main';
+    }
+
+
+
+    // Draw boundaries for debugging
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+}
+
+// local update 출력
+function drawGameFrame2() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var alive = false;
+    let snakes = [];
+    for (let snakeDTO of globalGameFrameDTO.snakes) {
+        let snake = new Snake(
+            snakeDTO.memberId,
+            snakeDTO.snakeLength,
+            snakeDTO.snakeNodePlaces,
+            snakeDTO.alive,
+            snakeDTO.direction,
+            snakeDTO.grow
+        );
+        snake.update();
+        snakes.push(snake);
+
+        // viewX, viewY 값 player지렁이 위치로
+        if (snakeDTO.memberId === memberId) {
+            alive = true;
+
+            let head = snake.snakeNodePlaces[0];
+            viewX = head.x * scale - canvas.width / 2;
+            viewY = head.y * scale - canvas.height / 2;
+
+            // Constrain viewport to map boundaries
+            viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
+            viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
+        }
+    }
+
+    // Draw each snake
+    for (let snake of snakes) {
+        snake.draw();
+    }
+
+    for (let experience of globalGameFrameDTO.experiences) {
+        experience.x
+        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
 
     // Update the score
@@ -134,9 +243,16 @@ document.addEventListener('keydown', (event) => {
         sendInput('down');
     }
 });
+
+
+function updateScore(score) {
+    document.getElementById('score').textContent = `Score: ${score}`;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 // test
@@ -162,6 +278,16 @@ function fetchGameFrame() {
 // const gameFrameDTO = fetchGameFrame();
 // drawGameFrame(gameFrameDTO);
 
+let toggle = 1;
+
 setInterval(() => {
-    stompClient.send("/app/gameOutput", {}, );
-}, 500);
+    if (toggle)
+    {
+        stompClient.send("/app/gameOutput", {}, );
+        toggle = 0;
+    }
+    else{
+        drawGameFrame2();
+        toggle = 1;
+    }
+}, 125);
