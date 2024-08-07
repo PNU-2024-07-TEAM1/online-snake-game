@@ -54,7 +54,7 @@ public class GameController {
         Snake snake;
         if (principal != null){
             snake = gameService.getSnake(
-                    memberRepository.findByLoginId(principal.getName()).get().getId()
+                    memberRepository.findByUsername(principal.getName()).get().getId()
             );
         } else {
             snake = gameService.getSnake(

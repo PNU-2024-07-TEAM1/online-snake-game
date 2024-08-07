@@ -46,13 +46,14 @@ function resizeCanvas() {
     canvas.height = gameContainer.clientHeight;
 }
 class Snake {
-    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow) {
+    constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username) {
         this.id = id;
         this.snakeLength = snakeLength;
         this.snakeNodePlaces = snakeNodePlaces;
         this.isAlive = isAlive;
         this.direction = direction;
         this.grow = grow;
+        this.username = username
     }
     draw() {
         ctx.fillStyle = this.id === 1 ? 'green' : 'blue';
@@ -67,7 +68,7 @@ class Snake {
             ctx.textBaseline = 'middle';
             // 머리 부분의 ID 표시
             let head = this.snakeNodePlaces[0];
-            ctx.fillText(this.id, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
+            ctx.fillText(this.username, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
         }
     }
 
@@ -138,7 +139,8 @@ async function drawGameFrame(gameFrameDTO) {
             snakeDTO.snakeNodePlaces,
             snakeDTO.alive,
             snakeDTO.direction,
-            snakeDTO.grow
+            snakeDTO.grow,
+            snakeDTO.username
         );
         snakes.push(snake);
 

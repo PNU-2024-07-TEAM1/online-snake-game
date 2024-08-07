@@ -52,7 +52,7 @@ public class Snake {
     }
 
     void update() throws Exception {
-        if (memberId == 2){
+        if (memberId == 1){
             Random random = new Random();
             int directionInt = random.nextInt(4);
             if (directionInt == 0){
