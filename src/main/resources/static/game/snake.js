@@ -12,7 +12,9 @@ stompClient.connect({}, function (frame) {
     //console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/messages', function (message) {
         var messageDTO = JSON.parse(message.body);
-        document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
+        // 색상을 적용한 username과 메시지 내용을 HTML로 생성
+        var messageHtml = '<div><span style="color: ' + messageDTO.color + ';">' + messageDTO.username + '</span> : ' + messageDTO.content + '</div>';
+        document.getElementById('messages').innerHTML += messageHtml;
         scrollToBottom();
     });
 
