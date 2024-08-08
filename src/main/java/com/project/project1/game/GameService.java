@@ -27,8 +27,8 @@ public class GameService {
     public void initGame() throws Exception {
         int numSnake = (int) snakes.stream().count();
         int numExperience = (int) experiences.stream().count();
-        randomSpawnExperiences(Math.max(0, 100-numExperience));
-        randomSpawnSnakes(Math.max(0, 50 - numSnake));
+        randomSpawnExperiences(Math.max(0, 50-numExperience));
+        randomSpawnSnakes(Math.max(0, 20 - numSnake));
         computerId = memberService.getMember("computer").getId();
     }
 
@@ -57,8 +57,8 @@ public class GameService {
         for (int i = 0; i<num; i++){
             Experience experience = new Experience();
             experience.setPosition(new Point(
-                random.nextInt(50, 200),
-                random.nextInt(50, 200)
+                random.nextInt(10, 90),
+                random.nextInt(10, 90)
             ));
             GameService.experiences.add(experience);
         }
