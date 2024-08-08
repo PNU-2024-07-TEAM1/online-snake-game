@@ -67,3 +67,83 @@ canvas {
     overflow-y: auto; /* 수직 스크롤 가능 */
     overflow-x: hidden; /* 수평 스크롤 숨기기 */
 }
+
+/*#box {*/
+/*    display: flex;*/
+/*    width: 80%; !* Width of the entire box *!*/
+/*    max-width: 1200px; !* Optional max-width *!*/
+/*    height: 80%;*/
+/*    gap: 20px; !* Space between the leaderboard and profile section *!*/
+/*}*/
+#box {
+    position: absolute;
+    top: 5px; /* 위에서 5px 떨어진 위치 */
+    left: 5px; /* 왼쪽에서 5px 떨어진 위치 */
+    background-color: rgba(255, 255, 255, 0.0); /* 약간의 투명도 있는 배경색 */
+    padding: 5px; /* Padding 줄이기 */
+    border-radius: 3px; /* 모서리 반경 줄이기 */
+    z-index: 10; /* 다른 요소들 위에 위치하게 */
+}
+
+.leaderboard {
+    width: 300px; /* Leaderboard 너비 줄이기 */
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 3px 10px 4px rgba(0, 0, 0, 0.2); /* 그림자 줄이기 */
+    border-radius: 0.25rem; /* 모서리 반경 줄이기 */
+    height: auto; /* 높이를 자동으로 조정 */
+    overflow-y: auto; /* 스크롤 활성화 */
+    position: relative;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.leaderboard h2 {
+    margin-top: 0;
+    font-size: 1.25rem; /* 폰트 크기 줄이기 */
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #141a39;
+}
+
+.leaderboard td {
+    padding: 8px; /* Padding 줄이기 */
+    font-size: 1rem; /* 폰트 크기 줄이기 */
+}
+
+.leaderboard .number {
+    font-weight: bold;
+    font-size: 1rem; /* 폰트 크기 줄이기 */
+}
+
+.leaderboard .points {
+    font-weight: bold;
+    text-align: right;
+    font-size: 1rem; /* 폰트 크기 줄이기 */
+}
+
+.leaderboard tr {
+    transition: all 0.2s ease-in-out;
+    border-radius: 0.2rem; /* 모서리 반경 유지 */
+}
+
+.leaderboard tr:hover {
+    transform: scale(1.02); /* Hover 시 크기 증가 줄이기 */
+    box-shadow: 0px 3px 10px 4px rgba(0, 0, 0, 0.2); /* 그림자 줄이기 */
+}
+
+.leaderboard .rank-1 {
+    background-color: #FFD700; /* Gold */
+    color: #fff;
+}
+
+.leaderboard .rank-2 {
+    background-color: #C0C0C0; /* Silver */
+    color: #fff;
+}
+
+.leaderboard .rank-3 {
+    background-color: #CD7F32; /* Bronze */
+    color: #fff;
+}
