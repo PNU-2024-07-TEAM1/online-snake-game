@@ -22,10 +22,14 @@ public class GameService {
     public static boolean isGameRunning = false;
     public static GameFrameDTO gameFrameDTO;
     private final MemberService memberService;
+    public static Integer computerId;
 
     public void initGame() throws Exception {
-        randomSpawnExperiences(100);
-        randomSpawnSnakes(50);
+        int numSnake = (int) snakes.stream().count();
+        int numExperience = (int) experiences.stream().count();
+        randomSpawnExperiences(Math.max(0, 100-numExperience));
+        randomSpawnSnakes(Math.max(0, 50 - numSnake));
+        computerId = memberService.getMember("computer").getId();
     }
 
     void addSnake(Member member) throws Exception {
@@ -61,9 +65,17 @@ public class GameService {
     }
 
     void randomSpawnSnakes(int num) throws Exception {
-        for (int i = 0; i<num; i++){
-            addSnake(memberRepository.findByUsername("computer").get());
+        try {
+            for (int i = 0; i<num; i++){
+                addSnake(memberRepository.findByUsername("computer").get());
+            }
         }
+        catch (Exception e){
+            Member member = new Member();
+            member.setUsername("computer");
+            memberRepository.save(member);
+        }
+
 
     }
 
