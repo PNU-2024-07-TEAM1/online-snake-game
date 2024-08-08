@@ -25,8 +25,10 @@ public class GameService {
     public static Integer computerId;
 
     public void initGame() throws Exception {
-        randomSpawnExperiences(100);
-        randomSpawnSnakes(50);
+        int numSnake = (int) snakes.stream().count();
+        int numExperience = (int) experiences.stream().count();
+        randomSpawnExperiences(Math.max(0, 100-numExperience));
+        randomSpawnSnakes(Math.max(0, 50 - numSnake));
         computerId = memberService.getMember("computer").getId();
     }
 
