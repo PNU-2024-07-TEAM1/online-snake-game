@@ -61,7 +61,7 @@ public class Snake {
 
     void update() throws Exception {
         if (!isTurn) {
-            if (memberId == 2) {
+            if (memberId == GameService.computerId) {
                 Random random = new Random();
                 int directionInt = random.nextInt(6);
                 if (directionInt == 0) {
