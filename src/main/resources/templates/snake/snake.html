@@ -16,10 +16,10 @@
         </script>
         <canvas id="gameCanvas"></canvas>
     </div>
-    <div class="chat-container">
-        <div id="score">Score: 0</div>
-        <div id="messages" class="scrollable-container"></div>
-        <input type="text" id="message" placeholder="Type a message...">
+    <div class="chat-container" id="chatContainer">
+        <div id="score" class="scrollable-container">Score: 0</div>
+        <div id="messages" class="chat-box"></div>
+        <textarea id="message" class="chat-input" placeholder="Type a message..."></textarea>
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
@@ -28,5 +28,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://unpkg.com/gl-matrix@2.4.0/dist/gl-matrix.js"></script>
 <script src="snake.js"></script>
+<script src="chat.js"></script>
 </body>
 </html>
