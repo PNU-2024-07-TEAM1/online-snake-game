@@ -35,11 +35,8 @@ public class GameController {
         System.out.println(customOAuth2UserDetails.getLoginId());
         System.out.println(customOAuth2UserDetails.getUsername());
 
-        if (customOAuth2UserDetails != null){
-            member = memberRepository.findByLoginId(customOAuth2UserDetails.getLoginId()).get();
-        }else {
-            member = memberRepository.findByUsername("anonymous").get();
-        }
+        member = memberRepository.findByLoginId(customOAuth2UserDetails.getLoginId()).get();
+
         gameService.initGame();
         gameService.addSnake(
             member
@@ -51,21 +48,11 @@ public class GameController {
 
     @MessageMapping("/gameInput")
     public void gameInput(String direction, Principal principal) throws Exception {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        CustomOAuth2UserDetails customOAuth2UserDetails = (CustomOAuth2UserDetails)principal;
-
         Snake snake;
-        System.out.println(principal.getName());
-        if (principal != null){
 
-            snake = gameService.getSnake(
-                    memberRepository.findByUsername(principal.getName()).get().getId()
-            );
-        } else {
-            snake = gameService.getSnake(
-                    memberRepository.findByUsername("anonymous").get().getId()
-            );
-        }
+        snake = gameService.getSnake(
+                memberRepository.findByUsername(principal.getName()).get().getId()
+        );
 
         snake.setDirection(direction);
     }
