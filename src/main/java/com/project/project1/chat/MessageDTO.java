@@ -8,4 +8,5 @@ import lombok.Setter;
 public class MessageDTO{
     private String username;
     private String content;
+    private String color;
 }
