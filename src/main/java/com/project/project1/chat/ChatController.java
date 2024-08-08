@@ -44,6 +44,7 @@ public class ChatController {
             messageDTO.setUsername(principal.getName());
             messageDTO.setContent("이(가) 입장했습니다.");
             return messageDTO;
+
         }
         Member member = memberService.getMember(principal.getName());
         messageEntity = chatService.makeMessage(
