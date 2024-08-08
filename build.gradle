@@ -47,8 +47,9 @@ dependencies {
     // Redis (sorted set 사용을 위함
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //implementation 'io.lettuce.core:lettuce-core'
-
     //implementation 'io.lettuce.core:lettuce-core:6.1.5' // 최신 버전 번호로 대체
+    // MySQL
+    implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {
