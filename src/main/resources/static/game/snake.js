@@ -15,8 +15,9 @@ stompClient.connect({}, function (frame) {
     });
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
         //console.log(gameFrameDTO.body);
-        requestAnimationFrame(gameLoop);
+
         drawGameFrame(JSON.parse(gameFrameDTO.body));
+        requestAnimationFrame(gameLoop);
     });
 });
 function scrollToBottom() {
