@@ -61,9 +61,17 @@ public class GameService {
     }
 
     void randomSpawnSnakes(int num) throws Exception {
-        for (int i = 0; i<num; i++){
-            addSnake(memberRepository.findByUsername("computer").get());
+        try {
+            for (int i = 0; i<num; i++){
+                addSnake(memberRepository.findByUsername("computer").get());
+            }
         }
+        catch (Exception e){
+            Member member = new Member();
+            member.setUsername("computer");
+            memberRepository.save(member);
+        }
+
 
     }
 
