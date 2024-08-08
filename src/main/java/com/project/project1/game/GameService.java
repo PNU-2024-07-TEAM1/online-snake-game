@@ -22,14 +22,14 @@ public class GameService {
     public static boolean isGameRunning = false;
     public static GameFrameDTO gameFrameDTO;
     private final MemberService memberService;
-    public static Integer computerId;
+    public static Integer computerId = -1;
 
     public void initGame() throws Exception {
-        int numSnake = (int) snakes.stream().count();
+//        int numSnake = (int) snakes.stream().count();
         int numExperience = (int) experiences.stream().count();
         randomSpawnExperiences(Math.max(0, 50-numExperience));
-        randomSpawnSnakes(Math.max(0, 20 - numSnake));
-        computerId = memberService.getMember("computer").getId();
+//        randomSpawnSnakes(Math.max(0, 20 - numSnake));
+//        computerId = memberService.getMember("computer").getId();
     }
 
     void addSnake(Member member) throws Exception {
@@ -54,6 +54,7 @@ public class GameService {
 
     void randomSpawnExperiences(int num){
         Random random = new Random();
+
         for (int i = 0; i<num; i++){
             Experience experience = new Experience();
             experience.setPosition(new Point(
@@ -80,11 +81,16 @@ public class GameService {
     }
 
     Snake getSnake(Integer memberId) throws Exception {
-        for (Snake snake : snakes){
-            if (snake.getMemberId().equals(memberId)){
-                return snake;
+        try{
+            for (Snake snake : snakes){
+                if (snake.getMemberId().equals(memberId)){
+                    return snake;
+                }
             }
+        } catch (Exception e){
+
         }
+
         throw new Exception("Snake not found");
     }
 
@@ -92,14 +98,24 @@ public class GameService {
 
     @Scheduled(fixedRate = 250)
     public GameFrameDTO updateGameFrame() {
+        List<Snake> deadSnakes = new ArrayList<Snake>();
         try {
             for (int i = 0; i<snakes.stream().count(); i++){
                 Snake snake = snakes.get(i);
+                if (!snake.isAlive()){
+                    deadSnakes.add( snake);
+                    continue;
+                }
                 snake.update();
             }
         } catch (Exception e){
 
         }
+
+        for (Snake snake : deadSnakes){
+            snakes.remove(snake);
+        }
+        deadSnakes.clear();
 
         GameFrameDTO gameFrameDTO = new GameFrameDTO();
         gameFrameDTO.setSnakes(snakes);
