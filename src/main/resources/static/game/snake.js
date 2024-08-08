@@ -15,6 +15,7 @@ stompClient.connect({}, function (frame) {
     });
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
         //console.log(gameFrameDTO.body);
+
         drawGameFrame(JSON.parse(gameFrameDTO.body));
         requestAnimationFrame(gameLoop);
     });
@@ -81,47 +82,6 @@ class Snake {
     }
 
     update() {
-        // Update the position based on the current direction
-        /*for(let node of this.snakeNodePlaces)
-        {
-            switch (this.direction) {
-                case 'left':
-                    node.x -= 0.5;
-                    break;
-                case 'right':
-                    node.x += 0.5;
-                    break;
-                case 'up':
-                    node.y -= 0.5;
-                    break;
-                case 'down':
-                    node.y += 0.5;
-                    break;
-            }
-        }
-        */
-        // Update the position based on the current direction
-        // First, create a copy of the current head to be updated
-        //let head = { ...this.snakeNodePlaces[0]};
-        /*
-                let firstSegment = this.snakeNodePlaces[0];
-
-                switch (this.direction) {
-                    case 'left':
-                        this.snakeNodePlaces[0] = { x: firstSegment.x  - 0.1, y: firstSegment.y};
-                        break;
-                    case 'right':
-                        this.snakeNodePlaces[0] = { x: firstSegment.x  + 0.1, y: firstSegment.y};
-                        break;
-                    case 'up':
-                        this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y - 0.1};
-                        break;
-                    case 'down':
-                        this.snakeNodePlaces[0] = { x: firstSegment.x, y: firstSegment.y + 0.1};
-                        break;
-                }
-        */
-
         let newHead = { ...this.snakeNodePlaces[0] };
 
         switch (this.direction) {
@@ -162,8 +122,6 @@ class Snake {
             // Update the last segment to the midpoint
             this.snakeNodePlaces[this.snakeNodePlaces.length - 1] = { x: lastSegment.x +  this.delX, y: lastSegment.y + this.delY };
         }
-
-        //  this.snakeNodePlaces.unshift(head);
     }
 }
 // 프레임 단순 출력
@@ -209,7 +167,6 @@ async function drawGameFrame(gameFrameDTO) {
 
     experiences = gameFrameDTO.experiences
     for (let experience of experiences) {
-        experience.x
         ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
 
@@ -236,16 +193,12 @@ function drawGameFrame_local() {
         snake.update();
 
         // viewX, viewY 값 player지렁이 위치로
-        console.log(snake, memberId);
         if (snake.id === memberId) {
             alive = true;
 
             let head = snake.snakeNodePlaces[0];
             viewX = head.x * scale - canvas.width / 2;
             viewY = head.y * scale - canvas.height / 2;
-
-            console.log(viewX, viewY);
-
             // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
@@ -258,7 +211,6 @@ function drawGameFrame_local() {
     }
 
     for (let experience of experiences) {
-        experience.x
         ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
     }
 
@@ -340,7 +292,7 @@ function gameLoop(timestamp) {
     // 애니메이션 업데이트
     if (timestamp - lastUpdateTime >= updateInterval) {
         lastUpdateTime = timestamp;
-        if (toggle < 9)
+        if (toggle < 10)
         {
             drawGameFrame_local(); // Local update
             toggle += 1;
