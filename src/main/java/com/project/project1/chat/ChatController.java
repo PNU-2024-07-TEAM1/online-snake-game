@@ -67,6 +67,7 @@ public class ChatController {
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setUsername(messageEntity.getSender().getUsername());
         messageDTO.setContent(messageEntity.getContent());
+        messageDTO.setColor(member.getColor());
         return messageDTO;
     }
 }
