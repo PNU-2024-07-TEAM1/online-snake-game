@@ -45,7 +45,12 @@ public class ChatController {
     public MessageDTO sendMessage(String message, Principal principal) throws Exception {
 
         Message messageEntity;
-
+        if (message.equals("/in")){
+            MessageDTO messageDTO = new MessageDTO();
+            messageDTO.setUsername(principal.getName());
+            messageDTO.setContent("이(가) 입장했습니다.");
+            return messageDTO;
+        }
         if (principal == null){
             messageEntity = chatService.makeMessage(
                     memberService.getMember("anonymous"),

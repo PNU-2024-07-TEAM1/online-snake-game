@@ -30,8 +30,8 @@ public class Snake {
         this.memberService = memberService;
         Random random = new Random();
         this.grow = false;
-        int rand_x = random.nextInt(50, 200);
-        int rand_y = random.nextInt(50, 200);
+        int rand_x = random.nextInt(10, 90);
+        int rand_y = random.nextInt(10, 90);
         this.memberId = memberId;
         this.snakeLength = 3;
         this.snakeNodePlaces = new ArrayList<>();
