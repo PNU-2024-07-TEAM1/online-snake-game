@@ -1,12 +1,12 @@
 package com.project.project1.chat;
 
+import com.project.project1.member.Member;
 import com.project.project1.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,12 +33,6 @@ public class ChatController {
         template.convertAndSend("/topic/items", items);
     }
 
-    @GetMapping("/test")
-    public String test(Model model){
-        List<Message> messages = chatService.getMessages();
-        //model.addAttribute("messages", messages);
-        return "chat_test";
-    }
 
     @MessageMapping("/sendMessage") // 클라이언트가 /app/sendMessage로 메시지를 보내면
     @SendTo("/topic/messages") // 메시지를 /topic/messages로 브로드캐스팅
@@ -50,23 +44,19 @@ public class ChatController {
             messageDTO.setUsername(principal.getName());
             messageDTO.setContent("이(가) 입장했습니다.");
             return messageDTO;
+
         }
-        if (principal == null){
-            messageEntity = chatService.makeMessage(
-                    memberService.getMember("anonymous"),
-                    message
-            );
-            chatService.addMessage(messageEntity);
-        } else {
-            messageEntity = chatService.makeMessage(
-                    memberService.getMember(principal.getName()),
-                    message
-            );
-            chatService.addMessage(messageEntity);
-        }
+        Member member = memberService.getMember(principal.getName());
+        messageEntity = chatService.makeMessage(
+                member,
+                message
+        );
+        chatService.addMessage(messageEntity);
+
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setUsername(messageEntity.getSender().getUsername());
         messageDTO.setContent(messageEntity.getContent());
+        messageDTO.setColor(member.getColor());
         return messageDTO;
     }
 }

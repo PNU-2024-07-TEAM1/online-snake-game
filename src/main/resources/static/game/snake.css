@@ -1,59 +1,116 @@
+/* 전체 HTML 및 body 설정 */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
     overflow: hidden;
-    background-color: #121212;
+    background-color: #121212; /* 어두운 배경 */
     color: #ffffff;
-
     font-family: 'Pretendard-Regular', Arial, sans-serif;
-
 }
 
-.container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-}
-
+/* 게임 화면 설정 */
 .game-container {
-    flex: 0 0 70%; /* Left 70% */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Left 70% */
+    height: 100vh;
     background-color: #1e1e1e;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* 채팅 컨테이너 */
 .chat-container {
-    flex: 0 0 30%; /* Right 30% */
-    background: #333;
-    color: #fff;
-    padding: 10px;
-    box-sizing: border-box;
+    position: fixed;
+    bottom: 10px; /* 아래 여백 */
+    left: 10px; /* 왼쪽 여백 */
+    width: 300px;
+    background-color: #000; /* 진한 검정색 배경 */
+    color: #e0e0e0; /* 밝은 회색 텍스트 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
+    transition: height 0.3s ease;
+    padding: 20px; /* 내부 여백 추가 */
+    box-sizing: border-box;
 }
 
-.scrollable-container {
-    flex: 0 0 80%;
-    border: 1px solid #ccc; /* 테두리 설정 */
-    overflow-y: auto; /* 수직 스크롤 가능 */
-    overflow-x: hidden; /* 수평 스크롤 숨기기 */
+/* 채팅 메시지 스크롤 가능한 컨테이너 */
+.chat-box {
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.8); /* 배경색을 약간 투명하게 설정 */
+    border-bottom: 1px solid #444; /* 테두리 색상 변경 */
+    border-radius: 8px; /* 테두리 둥글게 설정 */
+    height: 0; /* Initially hidden */
+    max-height: 200px; /* 최대 높이 설정 */
+    opacity: 0; /* Initially hidden */
+    transition: height 0.3s ease, opacity 0.3s ease;
+    display: none; /* Initially hidden */
 }
 
-#score {
-    font-size: 1.5em;
+.chat-box.visible {
+    display: block; /* 채팅 로그가 보이도록 설정 */
+}
+
+.chat-box.reduced {
+    height: 50px; /* 바로 이전의 채팅만 보이는 높이 */
+    opacity: 1; /* 보이기 */
+}
+
+.chat-input {
+    background: rgba(255, 255, 255, 0.1); /* 반투명한 배경 */
+    border: 1px solid #555; /* 테두리 색상 */
+    border-radius: 4px;
+    padding: 10px;
+    color: #e0e0e0;
     margin-bottom: 10px;
-    text-align: center;
+    outline: none;
+    resize: none;
+    height: 50px; /* 입력란의 고정 높이 설정 */
+    overflow: hidden; /* 스크롤 숨기기 */
 }
 
+.chat-container.expanded .chat-box {
+    height: 200px; /* 원하는 높이로 조정 */
+    opacity: 1; /* 보이기 */
+    display: block; /* 채팅 로그가 보이도록 설정 */
+}
+
+.chat-container.expanded .chat-input {
+    /* 채팅 입력란은 항상 고정된 높이로 유지 */
+}
+
+/* 버튼 스타일 */
+button {
+    background: linear-gradient(135deg, #4e54c8, #8f94fb); /* 우주를 연상시키는 색상 */
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #3b3b6b, #7a8dff); /* 호버 시 색상 변경 */
+}
+
+/* 캔버스 설정 */
 canvas {
     background: #000;
     border: 2px solid #ffffff;
     display: block;
 }
 
+/* 폰트 설정 */
 @font-face {
     font-family: 'Pretendard-Regular';
     src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
@@ -147,3 +204,4 @@ canvas {
     background-color: #CD7F32; /* Bronze */
     color: #fff;
 }
+
