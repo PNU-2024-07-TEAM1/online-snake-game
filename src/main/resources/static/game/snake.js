@@ -7,37 +7,40 @@ let snakes = [];
 let experiences = [];
 
 stompClient.connect({}, function (frame) {
-    //console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/messages', function (message) {
         var messageDTO = JSON.parse(message.body);
         document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
         scrollToBottom();
     });
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
-        //console.log(gameFrameDTO.body);
-
         drawGameFrame(JSON.parse(gameFrameDTO.body));
         requestAnimationFrame(gameLoop);
     });
 });
+
 function scrollToBottom() {
     const container = document.getElementById('messages');
     container.scrollTop = container.scrollHeight;
 }
+
 function sendMessage() {
     var message = document.getElementById('message').value;
     stompClient.send("/app/sendMessage", {}, message);
     scrollToBottom();
 }
+
 function sendInput(direction) {
     stompClient.send("/app/gameInput", {}, direction);
 }
+
 // game 화면
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
 // Fixed map size
 const mapWidth = 5000; // Map width
 const mapHeight = 5000; // Map height
+
 // Game settings
 const scale = 20; // Size of each segment
 const speed = 100; // Speed of the game loop in ms
@@ -50,6 +53,7 @@ function resizeCanvas() {
     canvas.width = gameContainer.clientWidth;
     canvas.height = gameContainer.clientHeight;
 }
+
 class Snake {
     constructor(id, snakeLength, snakeNodePlaces, isAlive, direction, grow, username, color) {
         this.id = id;
@@ -61,24 +65,74 @@ class Snake {
         this.username = username;
         this.color = color;
 
-        this.delX = 0
-        this.delY = 0
+        this.delX = 0;
+        this.delY = 0;
     }
+
     draw() {
         ctx.fillStyle = this.color ? this.color : 'blue';
-        if(this.isAlive) {
+        if (this.isAlive) {
             for (let segment of this.snakeNodePlaces) {
-                ctx.fillRect(segment.x * scale - viewX, segment.y * scale - viewY, scale, scale);
+                this.drawSegment(segment.x * scale - viewX, segment.y * scale - viewY, scale / 2);
             }
-            // 텍스트 색상 및 폰트 설정
-            ctx.fillStyle = 'white';
-            ctx.font = '12px Arial';
+            ctx.font = 'bold 14px Arial'; // 글씨체와 크기 조정
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            // 머리 부분의 ID 표시
+
+            // 그림자 효과 추가
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
+            // 텍스트 색상 및 효과
+            ctx.fillStyle = 'white'; // 텍스트 색상
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)'; // 텍스트 외곽선 색상
+            ctx.lineWidth = 1.5; // 외곽선 두께
+
             let head = this.snakeNodePlaces[0];
+            ctx.strokeText(this.username, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
             ctx.fillText(this.username, head.x * scale - viewX + scale / 2, head.y * scale - viewY - 5);
+
+            // 그림자 효과를 원래 상태로 복원
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
         }
+    }
+
+    drawSegment(x, y, radius) {
+        const largerRadius = radius * 1.3; // 원의 크기를 1.3배로 확대
+        const shadowOffset = largerRadius * 0.4; // 그림자의 위치를 조정
+
+        // 그림자 그리기
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; // 그림자 색상 및 불투명도
+        ctx.beginPath();
+        ctx.arc(x + shadowOffset, y + shadowOffset, largerRadius * 0.8, 0, 2 * Math.PI); // 그림자 위치 및 크기
+        ctx.fill();
+
+        // 원의 그라디언트 그리기
+        let gradient = ctx.createRadialGradient(x, y, largerRadius * 0.3, x, y, largerRadius);
+        gradient.addColorStop(0, this.color ? this.color : 'deepskyblue'); // 중앙 색상: 강렬하게 설정
+        gradient.addColorStop(0.6, 'rgba(0, 0, 0, 0.4)'); // 중앙 색상에서 가장자리로 갈수록 색상 어두워짐
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.6)'); // 가장자리 색상: 깊이감 있는 어두운 색상
+
+        ctx.beginPath();
+        ctx.arc(x, y, largerRadius, 0, 2 * Math.PI); // 원 크기 조정
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // 별도의 광채 효과 (optional)
+        const haloRadius = largerRadius * 1.1; // 광채 효과를 위한 반지름
+        let haloGradient = ctx.createRadialGradient(x, y, largerRadius, x, y, haloRadius);
+        haloGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)'); // 광채 중앙 색상
+        haloGradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // 광채 가장자리 색상
+
+        ctx.beginPath();
+        ctx.arc(x, y, haloRadius, 0, 2 * Math.PI); // 광채 효과 적용
+        ctx.fillStyle = haloGradient;
+        ctx.fill();
     }
 
     update() {
@@ -99,31 +153,26 @@ class Snake {
                 break;
         }
 
-        // 새로운 머리 노드를 배열 앞에 추가합니다.
         this.snakeNodePlaces.unshift(newHead);
 
-        // 이전 프레임 head 노드 제거
-        if (this.snakeNodePlaces.length > this.snakeLength + 1)
-        {
-            this.snakeNodePlaces.splice(1, 1)
+        if (this.snakeNodePlaces.length > this.snakeLength + 1) {
+            this.snakeNodePlaces.splice(1, 1);
         }
 
         if (this.snakeNodePlaces.length > 1) {
             let lastSegment = this.snakeNodePlaces[this.snakeNodePlaces.length - 1];
             let secondLastSegment = this.snakeNodePlaces[this.snakeNodePlaces.length - 2];
 
-            if (this.delX === 0 && this.delY === 0)
-            {
-                // Calculate the delta
+            if (this.delX === 0 && this.delY === 0) {
                 this.delX = (secondLastSegment.x - lastSegment.x) / 10;
                 this.delY = (secondLastSegment.y - lastSegment.y) / 10;
             }
 
-            // Update the last segment to the midpoint
-            this.snakeNodePlaces[this.snakeNodePlaces.length - 1] = { x: lastSegment.x +  this.delX, y: lastSegment.y + this.delY };
+            this.snakeNodePlaces[this.snakeNodePlaces.length - 1] = { x: lastSegment.x + this.delX, y: lastSegment.y + this.delY };
         }
     }
 }
+
 // 프레임 단순 출력
 async function drawGameFrame(gameFrameDTO) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -143,7 +192,6 @@ async function drawGameFrame(gameFrameDTO) {
         );
         snakes.push(snake);
 
-        // viewX, viewY 값 player지렁이 위치로
         if (snakeDTO.memberId === memberId) {
             alive = true;
 
@@ -151,77 +199,99 @@ async function drawGameFrame(gameFrameDTO) {
             viewX = head.x * scale - canvas.width / 2;
             viewY = head.y * scale - canvas.height / 2;
 
-            // Constrain viewport to map boundaries
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
 
-            // Update the score
             updateScore(snake.snakeLength - 3);
         }
     }
 
-    // Draw each snake
     for (let snake of snakes) {
         snake.draw();
     }
 
-    experiences = gameFrameDTO.experiences
+    experiences = gameFrameDTO.experiences;
     for (let experience of experiences) {
-        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
+        drawExperience(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.35);
     }
 
     if (!alive) {
         await sleep(1000);
         window.location.href = '/main';
     }
+}
 
+function drawExperience(x, y, radius) {
+    const outerRadius = radius * 1.2; // 외부 원 반지름
+    const innerRadius = radius * 0.8; // 내부 원 반지름
 
+    // 그림자 그리기
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; // 그림자 색상 및 불투명도
+    ctx.beginPath();
+    ctx.arc(x + radius * 0.2, y + radius * 0.2, outerRadius * 0.7, 0, 2 * Math.PI); // 그림자 위치 및 크기
+    ctx.fill();
 
-    // Draw boundaries for debugging
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    // 원의 그라디언트 그리기
+    let gradient = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
+    gradient.addColorStop(0, 'limegreen'); // 중앙 색상: 강렬한 색상
+    gradient.addColorStop(0.6, 'mediumseagreen'); // 중앙 색상에서 가장자리로 갈수록 색상 변화
+    gradient.addColorStop(1, 'darkgreen'); // 가장자리 색상: 깊이감 있는 색상
+
+    ctx.beginPath();
+    ctx.arc(x, y, outerRadius, 0, 2 * Math.PI); // 원 크기 조정
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // 별도의 광채 효과 추가
+    const haloRadius = outerRadius * 1.3; // 광채 효과를 위한 반지름
+    let haloGradient = ctx.createRadialGradient(x, y, outerRadius * 0.8, x, y, haloRadius);
+    haloGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)'); // 광채 중앙 색상
+    haloGradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // 광채 가장자리 색상
+
+    ctx.beginPath();
+    ctx.arc(x, y, haloRadius, 0, 2 * Math.PI); // 광채 효과 적용
+    ctx.fillStyle = haloGradient;
+    ctx.fill();
+
+    // 추가적인 하이라이트 효과
+    ctx.beginPath();
+    ctx.arc(x - radius * 0.2, y - radius * 0.2, radius * 0.5, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; // 하이라이트 색상
+    ctx.fill();
 }
 
 // local update 출력
 function drawGameFrame_local() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var alive = false;
-    //let snakes = [];
     for (let snake of snakes) {
-
         snake.update();
 
-        // viewX, viewY 값 player지렁이 위치로
         if (snake.id === memberId) {
             alive = true;
 
             let head = snake.snakeNodePlaces[0];
             viewX = head.x * scale - canvas.width / 2;
             viewY = head.y * scale - canvas.height / 2;
-            // Constrain viewport to map boundaries
+
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
         }
     }
 
-    // Draw each snake
     for (let snake of snakes) {
         snake.draw();
     }
 
     for (let experience of experiences) {
-        ctx.fillRect(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.7, scale * 0.7);
+        drawExperience(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.35);
     }
 
-    // Update the score
-    // updateScore(score);
-
-    // Draw boundaries for debugging
     ctx.strokeStyle = 'blue';
     ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 }
+
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key === 'ArrowLeft') {
@@ -235,7 +305,6 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-
 function updateScore(score) {
     document.getElementById('score').textContent = `Score: ${score}`;
 }
@@ -246,70 +315,30 @@ function sleep(ms) {
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-// test
-function fetchGameFrame() {
-    return {
-        score:0,
-        snakes:[
-            {
-                memberId:1,
-                snakeLength:3,
-                snakeNodePlaces:[
-                    {x:4693,y:1320},
-                    {x:4694,y:1320},
-                    {x:4695,y:1320}
-                ],
-                direction:"left",
-                grow:false,
-                alive:true
-            }
-        ]
-    }
-}
-// const gameFrameDTO = fetchGameFrame();
-// drawGameFrame(gameFrameDTO);
 
 let toggle = 9;
-
-/*
-setInterval(() => {
-    if (toggle === 10)
-    {
-        stompClient.send("/app/gameOutput", {}, );
-        toggle = 1;
-    }
-    else{
-        drawGameFrame_local(toggle);
-        toggle += 1;
-    }
-}, 25);*/
 
 let lastUpdateTime = 0;
 const updateInterval = 25; // 애니메이션 업데이트 주기 (ms)
 const serverUpdateInterval = 250; // 서버와의 데이터 동기화 주기 (ms)
 
 function gameLoop(timestamp) {
-    // 애니메이션 업데이트
     if (timestamp - lastUpdateTime >= updateInterval) {
         lastUpdateTime = timestamp;
-        if (toggle < 10)
-        {
+        if (toggle < 10) {
             drawGameFrame_local(); // Local update
             toggle += 1;
-        }
-        else{
+        } else {
             toggle = 1;
             return;
         }
-
     }
 
     requestAnimationFrame(gameLoop); // 다음 프레임을 요청
 }
 
-// 서버와 데이터 동기화
 setInterval(() => {
     stompClient.send("/app/gameOutput", {}); // 서버로 데이터 전송
 }, serverUpdateInterval);
 
-// 게임 루프 시작
+requestAnimationFrame(gameLoop); // 게임 루프 시작
