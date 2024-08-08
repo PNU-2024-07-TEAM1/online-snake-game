@@ -31,13 +31,14 @@ html, body {
     width: 300px;
     background-color: #000; /* 진한 검정색 배경 */
     color: #e0e0e0; /* 밝은 회색 텍스트 */
-    border: 1px solid #ccc;
+    border: 1px solid #ccc; /* 채팅 컨테이너 테두리 */
     border-radius: 5px;
     display: flex;
     flex-direction: column;
     transition: height 0.3s ease;
     padding: 20px; /* 내부 여백 추가 */
     box-sizing: border-box;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5); /* 그림자 추가 */
 }
 
 /* 채팅 메시지 스크롤 가능한 컨테이너 */
@@ -125,28 +126,25 @@ canvas {
     overflow-x: hidden; /* 수평 스크롤 숨기기 */
 }
 
-/*#box {*/
-/*    display: flex;*/
-/*    width: 80%; !* Width of the entire box *!*/
-/*    max-width: 1200px; !* Optional max-width *!*/
-/*    height: 80%;*/
-/*    gap: 20px; !* Space between the leaderboard and profile section *!*/
-/*}*/
+/* 랭킹 리더보드 설정 */
 #box {
     position: absolute;
     top: 5px; /* 위에서 5px 떨어진 위치 */
     left: 5px; /* 왼쪽에서 5px 떨어진 위치 */
-    background-color: rgba(255, 255, 255, 0.0); /* 약간의 투명도 있는 배경색 */
+    background-color: rgba(0, 0, 0, 0.8); /* 채팅 박스와 동일한 배경색 */
     padding: 5px; /* Padding 줄이기 */
-    border-radius: 3px; /* 모서리 반경 줄이기 */
+    border-radius: 5px; /* 모서리 반경 조정 */
     z-index: 10; /* 다른 요소들 위에 위치하게 */
+    border: 1px solid #ccc; /* 채팅 컨테이너와 동일한 테두리 색상 */
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5); /* 채팅 컨테이너와 동일한 그림자 */
 }
 
 .leaderboard {
     width: 300px; /* Leaderboard 너비 줄이기 */
-    background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0px 3px 10px 4px rgba(0, 0, 0, 0.2); /* 그림자 줄이기 */
-    border-radius: 0.25rem; /* 모서리 반경 줄이기 */
+    background-color: rgba(0, 0, 0, 0.8); /* 채팅 박스와 동일한 배경색 */
+    border: 1px solid #ccc; /* 채팅 컨테이너와 동일한 테두리 색상 */
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5); /* 채팅 컨테이너와 동일한 그림자 */
+    border-radius: 5px; /* 모서리 반경 조정 */
     height: auto; /* 높이를 자동으로 조정 */
     overflow-y: auto; /* 스크롤 활성화 */
     position: relative;
@@ -161,7 +159,7 @@ canvas {
 .leaderboard table {
     width: 100%;
     border-collapse: collapse;
-    color: #141a39;
+    color: #e0e0e0; /* 채팅과 동일한 텍스트 색상 */
 }
 
 .leaderboard td {
@@ -182,12 +180,12 @@ canvas {
 
 .leaderboard tr {
     transition: all 0.2s ease-in-out;
-    border-radius: 0.2rem; /* 모서리 반경 유지 */
+    border-radius: 0.25rem; /* 모서리 반경 조정 */
 }
 
 .leaderboard tr:hover {
-    transform: scale(1.02); /* Hover 시 크기 증가 줄이기 */
-    box-shadow: 0px 3px 10px 4px rgba(0, 0, 0, 0.2); /* 그림자 줄이기 */
+    transform: scale(1.02); /* Hover 시 크기 증가 */
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
 }
 
 .leaderboard .rank-1 {
@@ -205,3 +203,24 @@ canvas {
     color: #fff;
 }
 
+/* Custom scrollbar styling for WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 10px;
+    background: #1b1e24; /* Dark background for the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #9b59b6, #d2b4de); /* Lighter purple gradient for cosmic theme */
+    border-radius: 10px;
+    border: 2px solid #1b1e24; /* Slight border to create a glowing effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #d2b4de, #9b59b6); /* Reverse gradient on hover */
+}
+
+/* Adding starry background to the body for complete effect */
+body {
+    background: url('https://www.transparenttextures.com/patterns/stardust.png'), #2c2f36; /* Dark purple background with stars */
+    color: #fff; /* Ensuring text is visible on dark background */
+}
