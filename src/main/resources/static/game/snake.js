@@ -7,11 +7,16 @@ let snakes = [];
 let experiences = [];
 
 stompClient.connect({}, function (frame) {
+    //console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/messages', function (message) {
         var messageDTO = JSON.parse(message.body);
         document.getElementById('messages').innerHTML += '<div>' + messageDTO.username + " : " + messageDTO.content + '</div>';
         scrollToBottom();
     });
+
+    var message =  "/in";
+    stompClient.send("/app/sendMessage", {}, message);
+
     stompClient.subscribe('/topic/gameFrame', function (gameFrameDTO) {
         drawGameFrame(JSON.parse(gameFrameDTO.body));
         requestAnimationFrame(gameLoop);
@@ -38,9 +43,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 // Fixed map size
-const mapWidth = 5000; // Map width
-const mapHeight = 5000; // Map height
-
+const mapWidth = 2000; // Map width
+const mapHeight = 2000; // Map height
 // Game settings
 const scale = 20; // Size of each segment
 const speed = 100; // Speed of the game loop in ms
@@ -216,6 +220,9 @@ async function drawGameFrame(gameFrameDTO) {
     }
 
     if (!alive) {
+        socket.close();
+
+        // 1초 후에 새로운 페이지로 이동합니다.
         await sleep(1000);
         window.location.href = '/main';
     }
