@@ -19,9 +19,8 @@ public class Snake {
     private List<Point> snakeNodePlaces;
     private boolean isAlive = true;
     private boolean isTurn = false;
-    private boolean isTurning = false;
     private String direction;
-    private String lastDirection;
+    private String newDirection;
     private boolean grow;
     private MemberService memberService;
     private String username;
@@ -43,7 +42,8 @@ public class Snake {
         Member member = memberService.getMember(memberId);
         this.username = member.getUsername();
         this.color = member.getColor();
-        lastDirection = this.direction;
+        newDirection = direction;
+
     }
 
     void gameOver() throws Exception {
@@ -65,32 +65,22 @@ public class Snake {
                 Random random = new Random();
                 int directionInt = random.nextInt(6);
                 if (directionInt == 0) {
-                    lastDirection = direction;
-                    direction = turnLeft(direction);
-                    isTurn = true;
+                    newDirection = turnLeft(direction);
                 } else if (directionInt == 1) {
-                    lastDirection = direction;
-                    direction = turnRight(direction);
-
-                    isTurn = true;
+                    newDirection = turnRight(direction);
                 }
             }
         }
 
-            if (isTurn){
-                isTurn = false;
-                lastDirection = direction;
-
-                isTurning = true;
-
-            }
-
+        if (isTurn){
+            isTurn = false;
+        }
 
 
 
 
         Point head = new Point(this.snakeNodePlaces.get(0));
-        switch (this.lastDirection) {
+        switch (this.direction) {
             case "left":
                 head.x -= 1;
                 break;
@@ -120,28 +110,23 @@ public class Snake {
         if (isCollision()){
             gameOver();
         }
-        lastDirection = direction;
+        if (!direction.equals(newDirection)){
+            direction = newDirection;
+            isTurn = true;
+        }
+
+
     }
 
     public void setDirection(String direction) {
-        if (isTurn)
-            return;
         if (direction.equals("left") && !this.direction.equals("left") && !this.direction.equals("right")) {
-            lastDirection = this.direction;
-            this.direction = direction;
-            isTurn = true;
+            this.newDirection = direction;
         } else if (direction.equals("right") && !this.direction.equals("right") && !this.direction.equals("left")) {
-            lastDirection = this.direction;
-            this.direction = direction;
-            isTurn = true;
+            this.newDirection = direction;
         } else if (direction.equals("up") && !this.direction.equals("up") && !this.direction.equals("down")) {
-            lastDirection = this.direction;
-            this.direction = direction;
-            isTurn = true;
+            this.newDirection = direction;
         } else if (direction.equals("down") && !this.direction.equals("down") && !this.direction.equals("up")) {
-            lastDirection = this.direction;
-            this.direction = direction;
-            isTurn = true;
+            this.newDirection = direction;
         }
 
 
