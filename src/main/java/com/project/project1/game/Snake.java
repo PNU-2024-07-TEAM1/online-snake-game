@@ -96,7 +96,7 @@ public class Snake {
         }
         this.snakeNodePlaces.add(0, head);
 
-        if (head.x < 0 || head.x >= 250 || head.y < 0 || head.y >= 250){
+        if (head.x < 0 || head.x >= 100 || head.y < 0 || head.y >= 100){
             gameOver();
         }
 
