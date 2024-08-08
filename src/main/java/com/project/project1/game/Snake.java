@@ -56,7 +56,7 @@ public class Snake {
         }
         memberService.reflectScore(memberId, snakeLength - 3);
         this.isAlive = false;
-        GameService.snakes.remove(this);
+//        GameService.snakes.remove(this);
     }
 
     void update() throws Exception {
