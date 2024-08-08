@@ -9,6 +9,59 @@
 <body>
 <div class="container">
     <div class="game-container">
+        <div id="box">
+            <!-- Leaderboard Section -->
+            <div class="leaderboard">
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="number">Rank</th>
+                        <th class="name">Username</th>
+                        <th class="points">Score</th>
+                    </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td class="number">1</td>
+                            <td class="name">
+                                <img src="crown_icon.png" alt="왕관" class="crown" style="width: 15px; height: 15px; margin-right: 2px; vertical-align: middle;">
+
+                                <span></span>
+                            </td>
+                            <td class="points"></td>
+                        </tr>
+                        <tr>
+                            <td class="number">2</td>
+                            <td class="name">
+                                <span></span>
+                            </td>
+                            <td class="points"></td>
+                        </tr>
+                        <tr>
+                            <td class="number">3</td>
+                            <td class="name">
+                                <span></span>
+                            </td>
+                            <td class="points"></td>
+                        </tr>
+                        <tr>
+                            <td class="number">4</td>
+                            <td class="name">
+                                <span></span>
+                            </td>
+                            <td class="points"></td>
+                        </tr>
+                        <tr>
+                            <td class="number">5</td>
+                            <td class="name">
+                                <span></span>
+                            </td>
+                            <td class="points"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <script th:inline="javascript">
             /*<![CDATA[*/
              var memberId = /*[[${memberId}]]*/ {};
