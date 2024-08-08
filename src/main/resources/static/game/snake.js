@@ -6,6 +6,8 @@ let globalGameFrameDTO;
 let snakes = [];
 let experiences = [];
 
+let ranking = [];
+
 stompClient.connect({}, function (frame) {
     //console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/messages', function (message) {
@@ -183,6 +185,7 @@ async function drawGameFrame(gameFrameDTO) {
     globalGameFrameDTO = gameFrameDTO;
     var alive = false;
     snakes = [];
+    ranking = [];
     for (let snakeDTO of gameFrameDTO.snakes) {
         let snake = new Snake(
             snakeDTO.memberId,
@@ -206,8 +209,14 @@ async function drawGameFrame(gameFrameDTO) {
             viewX = Math.max(0, Math.min(viewX, mapWidth - canvas.width));
             viewY = Math.max(0, Math.min(viewY, mapHeight - canvas.height));
 
+
+
             updateScore(snake.snakeLength - 3);
         }
+        ranking.push({
+            name:snakeDTO.username,
+            score:(snake.snakeLength-3)
+        })
     }
 
     for (let snake of snakes) {
@@ -226,6 +235,7 @@ async function drawGameFrame(gameFrameDTO) {
         await sleep(1000);
         window.location.href = '/main';
     }
+    updateRanking()
 }
 
 function drawExperience(x, y, radius) {
@@ -265,6 +275,31 @@ function drawExperience(x, y, radius) {
     ctx.arc(x - radius * 0.2, y - radius * 0.2, radius * 0.5, 0, 2 * Math.PI);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; // 하이라이트 색상
     ctx.fill();
+}
+
+function updateRanking(){
+    ranking.sort((a, b) => b.score - a.score);
+    // HTML 테이블의 tbody 요소를 가져옴
+
+    const tbody = document.getElementById('leaderboardBody');
+    const rows = tbody.getElementsByTagName('tr');
+
+    // 데이터 배열을 순회하면서 테이블의 각 행을 추가
+    ranking.forEach((member, index) => {
+        if (index >= 5)
+            return;
+        // name 셀의 span 요소 가져오기
+        const nameCell = rows[index].querySelector('td.name');
+        const nameSpan = nameCell.querySelector('span');
+        // points 셀의 텍스트 가져오기
+        const pointsCell = rows[index].querySelector('td.points');
+
+        // 텍스트 업데이트
+        if (nameSpan) {
+            nameSpan.textContent = member.name;
+        }
+        pointsCell.textContent = member.score;
+    });
 }
 
 // local update 출력

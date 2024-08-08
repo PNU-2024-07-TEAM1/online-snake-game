@@ -238,6 +238,7 @@
             border: 1px solid #888;
             width: 80%;
             max-width: 500px;
+            border-radius: 10px; /* 모서리 둥글게 */
         }
 
         /* 닫기 버튼 스타일 */
@@ -254,7 +255,9 @@
             text-decoration: none;
             cursor: pointer;
         }
-
+        h2 {
+            margin-bottom: 20px; /* 제목 아래 여백 추가 */
+        }
         /* 폼과 라벨 스타일 */
         form {
             display: flex;
@@ -263,10 +266,20 @@
 
         label {
             margin: 10px 0 5px;
+            font-weight: bold; /* 라벨 두껍게 */
         }
 
         input[type="text"] {
-            margin-bottom: 10px;
+            padding: 10px; /* 패딩 추가 */
+            border: 1px solid #ccc; /* 테두리 색상 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            font-size: 16px; /* 글자 크기 */
+            transition: border-color 0.3s; /* 테두리 색상 변화 효과 */
+        }
+
+        input[type="text"]:focus {
+            border-color: #5c5be5; /* 포커스 시 테두리 색상 */
+            outline: none; /* 기본 아우트라인 제거 */
         }
 
         /* 색상 선택기 스타일 */
@@ -290,9 +303,21 @@
             border-radius: 50%;
         }
 
-        /* 제출 버튼 스타일 */
+        .submit-container {
+            display: flex; /* flexbox 사용 */
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            margin-top: 10px; /* 상단 여백 */
+        }
+
         input[type="submit"] {
             margin-top: 10px;
+            color: #fff;
+            background-color: #5c5be5;
+            border: none; /* 기본 테두리 제거 */
+            border-radius: 2rem;
+            width: 7rem;
+            height: 2rem;
+            cursor: pointer; /* 클릭 가능 표시 */
         }
     </style>
 </head>
@@ -313,12 +338,26 @@
             <!-- Uncomment and replace with Thymeleaf code -->
             <tr th:each="member, iter : ${memberList}" th:classappend="${iter.index == 0 ? 'rank-1' : (iter.index == 1 ? 'rank-2' : (iter.index == 2 ? 'rank-3' : ''))}">
                 <td class="number" th:text="${iter.index + 1}"></td>
-                <td class="name" th:text="${member.username}"></td>
+                <td class="name">
+                    <span th:if="${iter.index == 0}">
+                        <img src="crown_icon.png" alt="왕관" class="crown">
+                    </span>
+                    <span th:text="${member.username}"></span>
+                </td>
                 <td class="points" th:text="${member.score}"></td>
             </tr>
             </tbody>
         </table>
     </div>
+
+    <style>
+        .crown {
+            width: 20px;  /* 왕관 아이콘 크기 */
+            height: 20px;
+            margin-right: 5px; /* 유저네임과의 간격 */
+            vertical-align: middle; /* 세로 정렬 */
+        }
+    </style>
 
     <!-- Profile and Buttons Section -->
     <div class="profile-section">
@@ -338,6 +377,9 @@
             <span class="close">&times;</span>
             <h2>Settings</h2>
 
+            <!--            &lt;!&ndash; 프로필 이미지 추가 &ndash;&gt;-->
+            <!--            <img class="profile-image" th:src="${curUserProfileImage}" alt="Profile Picture">-->
+
             <form th:action="@{/edit}" method="post">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username"  th:value="${curUserName}">
@@ -346,8 +388,9 @@
                 <div class="color-picker">
                     <input type="color" id="color" name="color" th:value="${curColor}">
                 </div>
-
-                <input type="submit" value="Save Settings" onclick="">
+                <div class="submit-container">
+                    <input type="submit" value="Save Settings" onclick="">
+                </div>
             </form>
         </div>
     </div>
