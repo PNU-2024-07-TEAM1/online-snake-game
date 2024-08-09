@@ -302,6 +302,20 @@ function updateRanking(){
         }
         pointsCell.textContent = member.score;
     });
+
+    for (i = ranking.length; i<5; i++){
+        // name 셀의 span 요소 가져오기
+        const nameCell = rows[i].querySelector('td.name');
+        const nameSpan = nameCell.querySelector('span');
+        // points 셀의 텍스트 가져오기
+        const pointsCell = rows[i].querySelector('td.points');
+
+        // 텍스트 업데이트
+        if (nameSpan) {
+            nameSpan.textContent = "";
+        }
+        pointsCell.textContent = "";
+    }
 }
 
 // local update 출력
