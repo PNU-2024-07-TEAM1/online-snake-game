@@ -345,9 +345,7 @@ function drawGameFrame_local() {
         drawExperience(experience.position.x * scale - viewX, experience.position.y * scale - viewY, scale * 0.35);
     }
 
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
 }
 
 document.addEventListener('keydown', (event) => {

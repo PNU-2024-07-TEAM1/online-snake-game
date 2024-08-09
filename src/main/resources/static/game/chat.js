@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!chatInput.value.trim()) {
                 chatContainer.classList.remove('expanded');
                 chatBox.classList.remove('visible');
+                chatBox.classList.add('reduced');
                 // 채팅 로그를 바로 이전 메시지 1개만 보이도록 설정
                 const messages = chatBox.querySelectorAll('div');
                 if (messages.length > 1) {
